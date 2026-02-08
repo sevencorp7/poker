@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Мобильный покер с ботом</title>
+    <title>🔥 Эпичный Покер</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,315 +14,453 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0d4a1e, #0a3618);
+            background: linear-gradient(135deg, #0a1929, #1a3c2b);
             color: #fff;
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            padding: 10px;
             overflow-x: hidden;
             touch-action: manipulation;
+            padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px;
         }
         
-        .container {
-            max-width: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            margin: 0 auto;
+        /* Партиклы на фоне */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
         
-        h1 {
+        /* Заголовок с анимацией */
+        .header {
             text-align: center;
+            padding: 15px;
             margin-bottom: 15px;
-            color: #FFD700;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            font-size: 1.8rem;
-            padding: 0 10px;
+            position: relative;
         }
         
-        .game-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+        .title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 5px;
+            animation: titleGlow 2s infinite alternate;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: #aaa;
             font-size: 0.9rem;
-        }
-        
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .info-label {
-            font-size: 0.8rem;
             opacity: 0.8;
-            margin-bottom: 3px;
         }
         
-        .info-value {
-            color: #FFD700;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .stage-indicator {
-            background-color: rgba(33, 150, 243, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-            font-weight: bold;
-            border: 2px solid #2196F3;
-            font-size: 1rem;
-        }
-        
-        /* Карточки игроков */
-        .player-area {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-            border-radius: 15px;
+        /* Статистика с анимацией */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
             padding: 15px;
+            border-radius: 15px;
             margin-bottom: 15px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: statsPulse 3s infinite;
         }
         
-        .player-area.active {
-            border-color: #FFD700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        .stat-item {
+            text-align: center;
+            padding: 5px;
         }
         
-        .player-area.winner {
+        .stat-label {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        
+        /* Игроки с анимацией */
+        .player {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08), 
+                rgba(255, 255, 255, 0.02));
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 3px solid transparent;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        
+        .player::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                #ff0000, #ff9900, #ffff00, #00ff00, 
+                #00ffff, #0000ff, #9900ff);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .player.winner::before {
+            opacity: 1;
+            animation: rainbowBorder 3s linear infinite;
+        }
+        
+        .player.active {
             border-color: #4CAF50;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
+            animation: playerActive 1.5s infinite alternate;
+            transform: translateY(-5px);
         }
         
         .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .player-name {
             font-size: 1.2rem;
             font-weight: bold;
             color: #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .player-bet {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
+        .player-balance {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
         }
         
         .player-cards {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            min-height: 95px;
-        }
-        
-        .player-status {
-            text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.9;
-            min-height: 20px;
-        }
-        
-        /* Игровой стол */
-        .table-area {
-            background: linear-gradient(135deg, #2d5a2d, #1e3e1e);
-            border-radius: 20px;
-            padding: 20px 15px;
+            gap: 12px;
             margin: 15px 0;
-            text-align: center;
-            border: 4px solid #8B4513;
-            position: relative;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            min-height: 100px;
         }
         
-        .pot-display {
-            font-size: 1.5rem;
-            color: #FFD700;
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
-        }
-        
-        .community-cards {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
-        /* Карты */
+        /* Карты с супер анимациями */
         .card {
-            width: 60px;
-            height: 85px;
-            background-color: white;
-            border-radius: 8px;
+            width: 65px;
+            height: 90px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 6px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             position: relative;
-            flex-shrink: 0;
-            touch-action: none;
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+        }
+        
+        .card:hover::before {
+            animation: cardShine 1s;
         }
         
         .card.red {
-            color: #d50000;
+            color: #e53935;
         }
         
         .card.black {
-            color: #000000;
+            color: #263238;
         }
         
         .card-back {
             background: linear-gradient(135deg, #1a237e, #283593);
-            color: white;
             justify-content: center;
             align-items: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
         
-        .card-top, .card-bottom {
-            font-size: 0.9rem;
+        .card-back::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(45deg, 
+                transparent 20%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent 80%);
+            animation: backShine 3s infinite linear;
+            transform: translateX(-100%) rotate(45deg);
+        }
+        
+        .card-value {
+            font-size: 1rem;
             font-weight: bold;
             line-height: 1;
+            z-index: 1;
         }
         
-        .card-center {
-            font-size: 1.8rem;
+        .card-suit {
+            font-size: 2rem;
             text-align: center;
             line-height: 1;
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 1;
         }
         
-        .card-bottom {
+        .card-value.bottom {
             transform: rotate(180deg);
         }
         
-        /* Элементы управления */
-        .controls {
-            background-color: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 15px;
+        /* Анимация переворота карты */
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+        
+        /* Подсветка карт в комбинации */
+        .card.combo-highlight {
+            animation: comboGlow 2s infinite alternate;
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.6);
+            z-index: 10;
+        }
+        
+        /* Стол с анимацией */
+        .table {
+            background: radial-gradient(circle at center, #2e7d32, #1b5e20);
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px 0;
+            border: 6px solid #8B4513;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 0, 0, 0.5),
+                0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .table::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 3px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            pointer-events: none;
+            animation: tableGlow 3s infinite alternate;
+        }
+        
+        .pot {
+            font-size: 1.8rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.7);
+            animation: potPulse 2s infinite alternate;
+        }
+        
+        .community-cards {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        /* Комбинация с анимацией */
+        .combination {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 12px;
             margin-top: 15px;
+            font-size: 0.95rem;
+            color: #FFD700;
+            text-align: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .combination::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            border-radius: 14px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .combination.highlight {
+            animation: comboTextGlow 1s infinite alternate;
+        }
+        
+        .combination.highlight::before {
+            opacity: 0.3;
+        }
+        
+        /* Управление с анимациями */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .bet-control {
-            margin-bottom: 15px;
-            padding: 12px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         .bet-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 8px;
+            margin-top: 15px;
             position: relative;
         }
         
         .bet-slider {
-            flex: 1;
-            height: 40px; /* Увеличиваем высоту для удобного касания */
+            width: 100%;
+            height: 40px;
             -webkit-appearance: none;
-            appearance: none;
-            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
-            outline: none;
+            background: linear-gradient(to right, 
+                #4CAF50, #FFC107, #F44336);
             border-radius: 20px;
-            cursor: pointer;
-            position: relative;
-            z-index: 1;
+            outline: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        /* Стили для мобильного слайдера */
         .bet-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: #FFD700;
-            border: 3px solid #fff;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 4px solid white;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            transform: scale(1);
+            transition: transform 0.2s;
         }
         
-        .bet-slider::-moz-range-thumb {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #FFD700;
-            border: 3px solid #fff;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
+        .bet-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
         }
         
         .bet-amount {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.6rem;
             color: #FFD700;
-            min-width: 60px;
-            text-align: center;
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            animation: amountPulse 1s infinite alternate;
         }
         
         .action-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 15px;
         }
         
         .action-btn {
-            padding: 18px 10px;
+            padding: 20px 15px;
             font-size: 1.1rem;
             font-weight: bold;
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
+            gap: 10px;
             position: relative;
             overflow: hidden;
+            min-height: 65px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(0);
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .action-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
         }
         
         .action-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
         }
         
         .action-btn:disabled {
@@ -332,1132 +470,1205 @@
             box-shadow: none;
         }
         
-        /* Эффект нажатия для мобильных */
-        .action-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%, -50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .action-btn:active::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            20% {
-                transform: scale(25, 25);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(40, 40);
-                opacity: 0;
-            }
-        }
-        
-        .check-btn {
+        .action-btn-primary {
             background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
+            grid-column: span 2;
         }
         
-        .call-btn {
+        .action-btn-success {
             background: linear-gradient(135deg, #4CAF50, #388E3C);
             color: white;
         }
         
-        .raise-btn {
+        .action-btn-warning {
             background: linear-gradient(135deg, #FF9800, #F57C00);
             color: white;
         }
         
-        .fold-btn {
+        .action-btn-danger {
             background: linear-gradient(135deg, #F44336, #D32F2F);
             color: white;
         }
         
-        .start-btn {
-            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
-            color: white;
-            grid-column: span 2;
+        /* Эффект нажатия */
+        .action-btn:active {
+            animation: btnClick 0.3s;
         }
         
-        .next-round-btn {
-            background: linear-gradient(135deg, #607D8B, #455A64);
-            color: white;
-            grid-column: span 2;
-        }
-        
-        /* Лог игры */
+        /* Лог с анимацией */
         .game-log {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            max-height: 150px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 120px;
             overflow-y: auto;
             font-size: 0.85rem;
-            line-height: 1.4;
-            -webkit-overflow-scrolling: touch;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         .log-entry {
-            margin-bottom: 6px;
-            padding-bottom: 6px;
+            padding: 8px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Помощь */
-        .help-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #FFD700, #FFC107);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #000;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            border: 3px solid white;
-            touch-action: manipulation;
-        }
-        
-        .help-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            display: none;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .help-content {
-            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-            border-radius: 20px;
-            padding: 25px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 2px solid #FFD700;
-            position: relative;
-        }
-        
-        .help-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #F44336;
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .help-title {
-            color: #FFD700;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        
-        .help-section {
-            margin-bottom: 20px;
-        }
-        
-        .help-section h3 {
-            color: #4CAF50;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .help-section p {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-        
-        .combo-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .combo-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-        
-        /* Адаптация под очень маленькие экраны */
-        @media (max-width: 380px) {
-            .card {
-                width: 52px;
-                height: 74px;
-            }
-            
-            .card-center {
-                font-size: 1.5rem;
-            }
-            
-            .card-top, .card-bottom {
-                font-size: 0.8rem;
-            }
-            
-            .player-cards {
-                min-height: 85px;
-            }
-            
-            .action-btn {
-                padding: 16px 8px;
-                font-size: 1rem;
-                min-height: 55px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            .bet-slider {
-                height: 36px;
-            }
-            
-            .bet-slider::-webkit-slider-thumb {
-                width: 40px;
-                height: 40px;
-            }
-        }
-        
-        @media (max-height: 700px) {
-            .card {
-                width: 50px;
-                height: 70px;
-            }
-            
-            .player-cards {
-                min-height: 80px;
-            }
-            
-            .action-btn {
-                padding: 14px 6px;
-                min-height: 50px;
-            }
+            color: #e0e0e0;
+            animation: logEntry 0.5s;
         }
         
         /* Анимации */
-        @keyframes pulse {
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
+        }
+        
+        @keyframes statsPulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        }
+        
+        @keyframes playerActive {
+            0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
+            100% { box-shadow: 0 0 40px rgba(76, 175, 80, 0.9); }
+        }
+        
+        @keyframes rainbowBorder {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        @keyframes cardShine {
+            0% { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(200%) skewX(-15deg); }
+        }
+        
+        @keyframes backShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        @keyframes comboGlow {
+            0% { 
+                box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+                transform: translateY(-8px) scale(1.05);
+            }
+            100% { 
+                box-shadow: 0 20px 40px rgba(255, 215, 0, 0.8);
+                transform: translateY(-12px) scale(1.1);
+            }
+        }
+        
+        @keyframes tableGlow {
+            0% { border-color: rgba(255, 255, 255, 0.1); }
+            100% { border-color: rgba(255, 255, 255, 0.3); }
+        }
+        
+        @keyframes potPulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            100% { transform: scale(1.05); }
+        }
+        
+        @keyframes comboTextGlow {
+            0% { 
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+            100% { 
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+            }
+        }
+        
+        @keyframes amountPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        @keyframes btnClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
             100% { transform: scale(1); }
         }
         
-        .pulse {
-            animation: pulse 0.5s ease-in-out;
+        @keyframes logEntry {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+        
+        @keyframes cardDeal {
+            0% { 
+                opacity: 0;
+                transform: translateY(-50px) rotate(-10deg);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+        
+        @keyframes chipFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Эффект раздачи карт */
+        .card.deal-animation {
+            animation: cardDeal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        /* Адаптация */
+        @media (max-width: 380px) {
+            .card {
+                width: 55px;
+                height: 80px;
+            }
+            
+            .card-suit {
+                font-size: 1.6rem;
+            }
+            
+            .action-btn {
+                padding: 18px 12px;
+                font-size: 1rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Статус игры */
+        .game-status {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(33, 150, 243, 0.1));
+            border-radius: 15px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 15px;
+            border: 2px solid #2196F3;
+            animation: statusPulse 2s infinite alternate;
+            backdrop-filter: blur(5px);
+        }
+        
+        @keyframes statusPulse {
+            0% { 
+                box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+                transform: scale(1);
+            }
+            100% { 
+                box-shadow: 0 0 20px rgba(33, 150, 243, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        /* Эффект выигрыша */
+        .win-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #FFD700;
+            animation: confettiFall 3s linear forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>♠️ Мобильный Покер ♥️</h1>
+    <!-- Частицы на фоне -->
+    <div id="particles-js"></div>
+    
+    <!-- Эффект выигрыша -->
+    <div class="win-effect" id="win-effect"></div>
+    
+    <div style="max-width: 500px; margin: 0 auto; padding: 10px;">
+        <!-- Шапка -->
+        <div class="header">
+            <div class="title">🔥 ЭПИЧНЫЙ ПОКЕР</div>
+            <div class="subtitle">Невероятные анимации и эффекты!</div>
+        </div>
         
-        <div class="game-info">
-            <div class="info-item">
-                <span class="info-label">Ваш баланс</span>
-                <span id="player-balance" class="info-value">1000</span>
+        <!-- Статистика -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">БАНК</div>
+                <div class="stat-value" id="pot">0</div>
             </div>
-            <div class="info-item">
-                <span class="info-label">Банк бота</span>
-                <span id="bot-balance" class="info-value">1000</span>
+            <div class="stat-item">
+                <div class="stat-label">РАУНД</div>
+                <div class="stat-value" id="round">1</div>
             </div>
-            <div class="info-item">
-                <span class="info-label">Раунд</span>
-                <span id="round" class="info-value">1</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Текущая ставка</span>
-                <span id="current-bet" class="info-value">10</span>
+            <div class="stat-item">
+                <div class="stat-label">СТАВКА</div>
+                <div class="stat-value" id="current-bet">10</div>
             </div>
         </div>
         
-        <div class="stage-indicator" id="stage">Pre-flop</div>
+        <!-- Статус игры -->
+        <div class="game-status" id="game-status">🎮 НАЖМИТЕ "ИГРАТЬ"</div>
         
-        <!-- Игрок -->
-        <div class="player-area" id="player-area">
+        <!-- Бот -->
+        <div class="player" id="bot-player">
             <div class="player-header">
-                <div class="player-name">Вы</div>
-                <div class="player-bet">Ставка: <span id="player-bet">0</span></div>
+                <div class="player-name">🤖 ДИЛЕР</div>
+                <div class="player-balance" id="bot-balance">1000</div>
             </div>
-            <div class="player-cards" id="player-cards"></div>
-            <div class="player-status" id="player-status">Ожидание...</div>
+            <div class="player-cards" id="bot-cards"></div>
+            <div class="combination" id="bot-combination"></div>
         </div>
         
-        <!-- Игровой стол -->
-        <div class="table-area">
-            <div class="pot-display">Банк: <span id="pot">0</span></div>
+        <!-- Стол -->
+        <div class="table">
+            <div class="pot">Банк: <span id="pot-value">0</span> 🪙</div>
             <div class="community-cards" id="community-cards"></div>
         </div>
         
-        <!-- Бот -->
-        <div class="player-area" id="bot-area">
+        <!-- Игрок -->
+        <div class="player" id="player-player">
             <div class="player-header">
-                <div class="player-name">Дилер-бот</div>
-                <div class="player-bet">Ставка: <span id="bot-bet">0</span></div>
+                <div class="player-name">🎮 ВЫ</div>
+                <div class="player-balance" id="player-balance">1000</div>
             </div>
-            <div class="player-cards" id="bot-cards"></div>
-            <div class="player-status" id="bot-status">Ожидание...</div>
+            <div class="player-cards" id="player-cards"></div>
+            <div class="combination" id="player-combination"></div>
         </div>
         
         <!-- Управление -->
         <div class="controls">
             <div class="bet-control">
-                <div>Размер ставки:</div>
+                <div>СТАВКА:</div>
                 <div class="bet-slider-container">
                     <input type="range" min="10" max="500" value="50" class="bet-slider" id="bet-slider">
-                    <div class="bet-amount" id="bet-amount">50</div>
                 </div>
+                <div class="bet-amount" id="bet-amount">50</div>
             </div>
             
             <div class="action-buttons">
-                <button class="action-btn check-btn" id="check-btn" disabled>Проверка</button>
-                <button class="action-btn call-btn" id="call-btn" disabled>Колл</button>
-                <button class="action-btn raise-btn" id="raise-btn" disabled>Поднять</button>
-                <button class="action-btn fold-btn" id="fold-btn" disabled>Фолд</button>
-                <button class="action-btn start-btn" id="start-btn">Начать игру</button>
-                <button class="action-btn next-round-btn" id="next-round-btn" disabled>След. раунд</button>
+                <button class="action-btn action-btn-primary" id="play-btn">🎮 НАЧАТЬ ИГРУ</button>
+                <button class="action-btn action-btn-success" id="check-call-btn" disabled>✓ ПРОВЕРКА</button>
+                <button class="action-btn action-btn-warning" id="raise-btn" disabled>↑ ПОДНЯТЬ</button>
+                <button class="action-btn action-btn-danger" id="fold-btn" disabled>✗ ФОЛД</button>
             </div>
             
             <div class="game-log" id="game-log">
-                <div class="log-entry">Готов к игре. Нажмите "Начать игру"</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Кнопка помощи -->
-    <div class="help-toggle" id="help-toggle">?</div>
-    
-    <!-- Оверлей помощи -->
-    <div class="help-overlay" id="help-overlay">
-        <div class="help-content">
-            <div class="help-close" id="help-close">×</div>
-            <h2 class="help-title">Правила игры</h2>
-            
-            <div class="help-section">
-                <h3>Как играть</h3>
-                <p>1. Нажмите "Начать игру"</p>
-                <p>2. Делайте ставки: Проверка, Колл, Поднять или Фолд</p>
-                <p>3. Используйте слайдер для выбора размера ставки</p>
-                <p>4. Цель: собрать лучшую покерную комбинацию из 5 карт</p>
-            </div>
-            
-            <div class="help-section">
-                <h3>Стадии игры</h3>
-                <p><strong>Pre-flop:</strong> Раздаются 2 карты каждому</p>
-                <p><strong>Flop:</strong> Выкладываются 3 общие карты</p>
-                <p><strong>Turn:</strong> Выкладывается 4-я общая карта</p>
-                <p><strong>River:</strong> Выкладывается 5-я общая карта</p>
-                <p><strong>Showdown:</strong> Вскрытие карт</p>
-            </div>
-            
-            <div class="help-section">
-                <h3>Комбинации покера</h3>
-                <div class="combo-list">
-                    <div class="combo-item">Роял-флэш</div>
-                    <div class="combo-item">Стрит-флэш</div>
-                    <div class="combo-item">Каре</div>
-                    <div class="combo-item">Фулл-хаус</div>
-                    <div class="combo-item">Флэш</div>
-                    <div class="combo-item">Стрит</div>
-                    <div class="combo-item">Тройка</div>
-                    <div class="combo-item">Две пары</div>
-                    <div class="combo-item">Пара</div>
-                    <div class="combo-item">Старшая карта</div>
-                </div>
-            </div>
-            
-            <div class="help-section">
-                <h3>Управление на телефоне</h3>
-                <p>• Кнопки увеличены для удобного нажатия</p>
-                <p>• Свайп влево/вправо по слайдеру для изменения ставки</p>
-                <p>• Все элементы адаптированы под мобильный экран</p>
+                <div class="log-entry">Добро пожаловать в эпичный покер! 💫</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Упрощенная версия игры для мобильных устройств
-        const gameState = {
+        // Библиотека для частиц
+        function initParticles() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'particles-canvas';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '-1';
+            document.getElementById('particles-js').appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let particleCount = 50;
+            
+            // Настройка размера canvas
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            // Создание частиц
+            function createParticles() {
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 3 + 1,
+                        speedX: Math.random() * 0.5 - 0.25,
+                        speedY: Math.random() * 0.5 - 0.25,
+                        color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
+                    });
+                }
+            }
+            
+            // Анимация частиц
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    if (particle.x < 0) particle.x = canvas.width;
+                    if (particle.x > canvas.width) particle.x = 0;
+                    if (particle.y < 0) particle.y = canvas.height;
+                    if (particle.y > canvas.height) particle.y = 0;
+                    
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                });
+                
+                requestAnimationFrame(animateParticles);
+            }
+            
+            // Инициализация
+            resizeCanvas();
+            createParticles();
+            animateParticles();
+            
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                createParticles();
+            });
+        }
+        
+        // Инициализация игры
+        const game = {
             player: { balance: 1000, bet: 0, hand: [], folded: false, isActive: false },
-            bot: { balance: 1000, bet: 0, hand: [], folded: false, isActive: false, bluffChance: 0.3 },
+            bot: { balance: 1000, bet: 0, hand: [], folded: false, isActive: false, bluff: 0.3 },
             deck: [],
             communityCards: [],
             pot: 0,
             round: 1,
             stage: 'preflop',
             currentBet: 10,
-            smallBlind: 10,
-            dealer: 'bot',
-            gameActive: false
+            gameActive: false,
+            dealer: 'bot'
         };
         
-        // DOM элементы
-        const playerBalanceEl = document.getElementById('player-balance');
-        const botBalanceEl = document.getElementById('bot-balance');
-        const roundEl = document.getElementById('round');
-        const currentBetEl = document.getElementById('current-bet');
-        const stageEl = document.getElementById('stage');
-        const playerBetEl = document.getElementById('player-bet');
-        const playerCardsEl = document.getElementById('player-cards');
-        const playerStatusEl = document.getElementById('player-status');
-        const playerArea = document.getElementById('player-area');
-        const botBetEl = document.getElementById('bot-bet');
-        const botCardsEl = document.getElementById('bot-cards');
-        const botStatusEl = document.getElementById('bot-status');
-        const botArea = document.getElementById('bot-area');
-        const potEl = document.getElementById('pot');
-        const communityCardsEl = document.getElementById('community-cards');
-        const gameLog = document.getElementById('game-log');
-        const betSlider = document.getElementById('bet-slider');
-        const betAmountEl = document.getElementById('bet-amount');
-        const checkBtn = document.getElementById('check-btn');
-        const callBtn = document.getElementById('call-btn');
-        const raiseBtn = document.getElementById('raise-btn');
-        const foldBtn = document.getElementById('fold-btn');
-        const startBtn = document.getElementById('start-btn');
-        const nextRoundBtn = document.getElementById('next-round-btn');
-        const helpToggle = document.getElementById('help-toggle');
-        const helpOverlay = document.getElementById('help-overlay');
-        const helpClose = document.getElementById('help-close');
+        // Элементы интерфейса
+        const elements = {
+            playerBalance: document.getElementById('player-balance'),
+            botBalance: document.getElementById('bot-balance'),
+            pot: document.getElementById('pot'),
+            potValue: document.getElementById('pot-value'),
+            round: document.getElementById('round'),
+            currentBet: document.getElementById('current-bet'),
+            gameStatus: document.getElementById('game-status'),
+            playerCards: document.getElementById('player-cards'),
+            botCards: document.getElementById('bot-cards'),
+            communityCards: document.getElementById('community-cards'),
+            playerCombination: document.getElementById('player-combination'),
+            botCombination: document.getElementById('bot-combination'),
+            betSlider: document.getElementById('bet-slider'),
+            betAmount: document.getElementById('bet-amount'),
+            playBtn: document.getElementById('play-btn'),
+            checkCallBtn: document.getElementById('check-call-btn'),
+            raiseBtn: document.getElementById('raise-btn'),
+            foldBtn: document.getElementById('fold-btn'),
+            gameLog: document.getElementById('game-log'),
+            playerElement: document.getElementById('player-player'),
+            botElement: document.getElementById('bot-player'),
+            winEffect: document.getElementById('win-effect')
+        };
         
-        // Масти и значения
+        // Масти и карты
         const suits = ['♠️', '♥️', '♦️', '♣️'];
         const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
         
         // Инициализация
         function init() {
-            updateUI();
             createDeck();
-            
-            // Исправляем обработчики событий для мобильных
-            setupMobileEvents();
-            
-            // Помощь
-            helpToggle.addEventListener('click', () => helpOverlay.style.display = 'flex');
-            helpClose.addEventListener('click', () => helpOverlay.style.display = 'none');
-            
-            // Закрытие помощи по клику вне окна
-            helpOverlay.addEventListener('click', (e) => {
-                if (e.target === helpOverlay) {
-                    helpOverlay.style.display = 'none';
-                }
-            });
-            
-            addLog("Готов к игре на мобильном!");
-        }
-        
-        // Настройка мобильных событий
-        function setupMobileEvents() {
-            // Начало игры
-            startBtn.addEventListener('click', startGame);
-            startBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                startGame();
-            });
-            
-            // Следующий раунд
-            nextRoundBtn.addEventListener('click', nextRound);
-            nextRoundBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                nextRound();
-            });
-            
-            // Действия игрока
-            checkBtn.addEventListener('click', playerCheck);
-            checkBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                playerCheck();
-            });
-            
-            callBtn.addEventListener('click', playerCall);
-            callBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                playerCall();
-            });
-            
-            raiseBtn.addEventListener('click', playerRaise);
-            raiseBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                playerRaise();
-            });
-            
-            foldBtn.addEventListener('click', playerFold);
-            foldBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                playerFold();
-            });
-            
-            // Слайдер ставки
-            betSlider.addEventListener('input', function() {
-                betAmountEl.textContent = this.value;
-            });
-            
-            // Также обрабатываем change для мобильных
-            betSlider.addEventListener('change', function() {
-                betAmountEl.textContent = this.value;
-            });
-            
-            // Обработка касания слайдера
-            betSlider.addEventListener('touchstart', function(e) {
-                e.stopPropagation();
-            });
-            
-            betSlider.addEventListener('touchmove', function(e) {
-                e.stopPropagation();
-            });
-            
-            // Добавляем вибрацию для кнопок (если поддерживается)
-            function vibrate() {
-                if ('vibrate' in navigator) {
-                    navigator.vibrate(30);
-                }
-            }
-            
-            // Добавляем вибрацию ко всем кнопкам
-            const allButtons = document.querySelectorAll('.action-btn:not(:disabled), .help-toggle, .help-close');
-            allButtons.forEach(btn => {
-                btn.addEventListener('touchstart', vibrate);
-            });
+            setupEventListeners();
+            updateUI();
+            initParticles();
+            addLog('💫 Добро пожаловать в Эпичный Покер!');
         }
         
         // Создание колоды
         function createDeck() {
-            gameState.deck = [];
+            game.deck = [];
             for (let suit of suits) {
                 for (let value of values) {
-                    gameState.deck.push({
+                    game.deck.push({
                         suit,
                         value,
-                        numericValue: values.indexOf(value) + 2,
+                        numeric: values.indexOf(value) + 2,
                         color: suit === '♥️' || suit === '♦️' ? 'red' : 'black'
                     });
                 }
             }
         }
         
-        // Перемешивание колоды
-        function shuffleDeck() {
-            for (let i = gameState.deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [gameState.deck[i], gameState.deck[j]] = [gameState.deck[j], gameState.deck[i]];
+        // Настройка событий
+        function setupEventListeners() {
+            // Кнопки
+            elements.playBtn.addEventListener('click', startGame);
+            elements.playBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startGame();
+            });
+            
+            elements.checkCallBtn.addEventListener('click', () => {
+                if (game.currentBet === 0 || game.player.bet === game.currentBet) {
+                    playerCheck();
+                } else {
+                    playerCall();
+                }
+            });
+            
+            elements.raiseBtn.addEventListener('click', playerRaise);
+            elements.foldBtn.addEventListener('click', playerFold);
+            
+            // Слайдер
+            elements.betSlider.addEventListener('input', () => {
+                elements.betAmount.textContent = elements.betSlider.value;
+            });
+        }
+        
+        // Создание конфессий
+        function createConfetti(count = 100) {
+            elements.winEffect.innerHTML = '';
+            elements.winEffect.style.opacity = '1';
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 15 + 10 + 'px';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                elements.winEffect.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                elements.winEffect.style.opacity = '0';
+                setTimeout(() => {
+                    elements.winEffect.innerHTML = '';
+                }, 3000);
+            }, 3000);
+        }
+        
+        // Анимация переворота карты
+        function flipCard(cardElement, callback) {
+            cardElement.classList.add('flip');
+            setTimeout(() => {
+                if (callback) callback();
+                setTimeout(() => {
+                    cardElement.classList.remove('flip');
+                }, 1000);
+            }, 300);
+        }
+        
+        // Подсветка карт в комбинации
+        function highlightComboCards(hand, communityCards) {
+            // Сбрасываем подсветку
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('combo-highlight');
+            });
+            
+            // Определяем сильные комбинации
+            const allCards = [...hand, ...communityCards];
+            const score = evaluateHand(hand, communityCards);
+            
+            if (score >= 4) { // Тройка и выше
+                setTimeout(() => {
+                    // Подсвечиваем все карты
+                    document.querySelectorAll('.card').forEach(card => {
+                        card.classList.add('combo-highlight');
+                    });
+                }, 500);
             }
         }
         
         // Начало игры
         function startGame() {
-            if (gameState.gameActive) return;
+            if (game.gameActive) return;
             
-            resetRound();
-            gameState.gameActive = true;
+            resetGame();
+            game.gameActive = true;
             shuffleDeck();
             dealCards();
             setBlinds();
             updateUI();
-            enablePlayerActions();
+            enableControls();
             
-            // Анимация
-            playerArea.classList.add('pulse');
-            setTimeout(() => playerArea.classList.remove('pulse'), 500);
-            
-            if (gameState.dealer === 'bot') {
-                gameState.player.isActive = true;
-                playerArea.classList.add('active');
-                addLog("Ваш ход!");
+            // Анимация активного игрока
+            if (game.dealer === 'bot') {
+                game.player.isActive = true;
+                elements.playerElement.classList.add('active');
+                setStatus('🎯 ВАШ ХОД!');
+                addLog('🎲 Ваш ход. Что делаете?');
             } else {
-                gameState.bot.isActive = true;
-                botArea.classList.add('active');
-                setTimeout(botAction, 1000);
+                game.bot.isActive = true;
+                elements.botElement.classList.add('active');
+                setStatus('🤖 Ход дилера...');
+                setTimeout(botTurn, 1500);
             }
             
-            startBtn.disabled = true;
-            addLog(`Раунд ${gameState.round} начался!`);
+            elements.playBtn.disabled = true;
+            elements.playBtn.textContent = '⚡ ИГРА ИДЁТ';
+            addLog(`🎰 Раунд ${game.round} начался!`);
         }
         
-        // Следующий раунд
-        function nextRound() {
-            gameState.round++;
-            startGame();
-            nextRoundBtn.disabled = true;
+        // Сброс игры
+        function resetGame() {
+            game.player.bet = 0;
+            game.bot.bet = 0;
+            game.pot = 0;
+            game.player.folded = false;
+            game.bot.folded = false;
+            game.player.isActive = false;
+            game.bot.isActive = false;
+            game.stage = 'preflop';
+            game.currentBet = 10;
+            
+            elements.playerElement.classList.remove('active', 'winner');
+            elements.botElement.classList.remove('active', 'winner');
+            elements.playerCombination.textContent = '';
+            elements.botCombination.textContent = '';
+            
+            createDeck();
         }
         
-        // Раздача карт
+        // Перемешивание
+        function shuffleDeck() {
+            for (let i = game.deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [game.deck[i], game.deck[j]] = [game.deck[j], game.deck[i]];
+            }
+        }
+        
+        // Раздача с анимацией
         function dealCards() {
-            gameState.player.hand = [];
-            gameState.bot.hand = [];
-            gameState.communityCards = [];
+            game.player.hand = [];
+            game.bot.hand = [];
+            game.communityCards = [];
             
             for (let i = 0; i < 2; i++) {
-                gameState.player.hand.push(gameState.deck.pop());
-                gameState.bot.hand.push(gameState.deck.pop());
+                game.player.hand.push(game.deck.pop());
+                game.bot.hand.push(game.deck.pop());
             }
             
-            renderCards();
+            renderCardsWithAnimation();
         }
         
-        // Установка блайндов
+        // Отрисовка с анимацией
+        function renderCardsWithAnimation() {
+            // Карты игрока
+            elements.playerCards.innerHTML = '';
+            game.player.hand.forEach((card, index) => {
+                const cardElement = createCardElement(card, false);
+                cardElement.style.animationDelay = `${index * 0.2}s`;
+                cardElement.classList.add('deal-animation');
+                elements.playerCards.appendChild(cardElement);
+            });
+            
+            // Карты бота
+            elements.botCards.innerHTML = '';
+            game.bot.hand.forEach((card, index) => {
+                const cardElement = createCardElement(card, true);
+                cardElement.style.animationDelay = `${(index + 2) * 0.2}s`;
+                cardElement.classList.add('deal-animation');
+                elements.botCards.appendChild(cardElement);
+            });
+            
+            // Общие карты
+            elements.communityCards.innerHTML = '';
+            game.communityCards.forEach((card, index) => {
+                const cardElement = createCardElement(card, false);
+                cardElement.style.animationDelay = `${index * 0.3}s`;
+                cardElement.classList.add('deal-animation');
+                elements.communityCards.appendChild(cardElement);
+            });
+        }
+        
+        // Блайнды
         function setBlinds() {
-            const smallBlind = gameState.smallBlind;
-            const bigBlind = smallBlind * 2;
+            const small = 10;
+            const big = 20;
             
-            if (gameState.dealer === 'bot') {
-                makeBet(gameState.player, bigBlind);
-                makeBet(gameState.bot, smallBlind);
-                addLog(`Вы: большой блайнд (${bigBlind})`);
+            if (game.dealer === 'bot') {
+                placeBet(game.player, big);
+                placeBet(game.bot, small);
+                addLog(`💎 Вы: большой блайнд (${big})`);
             } else {
-                makeBet(gameState.bot, bigBlind);
-                makeBet(gameState.player, smallBlind);
-                addLog(`Бот: большой блайнд (${bigBlind})`);
+                placeBet(game.bot, big);
+                placeBet(game.player, small);
+                addLog(`🤖 Дилер: большой блайнд (${big})`);
             }
             
-            gameState.currentBet = bigBlind;
+            game.currentBet = big;
         }
         
-        // Сделать ставку
-        function makeBet(player, amount) {
+        // Ставка с анимацией
+        function placeBet(player, amount) {
             const bet = Math.min(amount, player.balance);
             player.balance -= bet;
             player.bet += bet;
-            gameState.pot += bet;
-            if (bet > gameState.currentBet) gameState.currentBet = bet;
+            game.pot += bet;
+            if (bet > game.currentBet) game.currentBet = bet;
+            
+            // Анимация ставки
+            if (player === game.player) {
+                elements.playerElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    elements.playerElement.style.transform = '';
+                }, 300);
+            }
         }
         
         // Действия игрока
         function playerCheck() {
-            if (!gameState.player.isActive || gameState.player.folded) return;
+            if (!game.player.isActive) return;
             
-            if (gameState.currentBet === 0 || gameState.player.bet === gameState.currentBet) {
-                addLog("Вы проверяете");
-                endPlayerTurn();
-            } else {
-                addLog("Нельзя проверять");
-            }
+            addLog('✅ Вы проверяете');
+            elements.checkCallBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                elements.checkCallBtn.style.transform = '';
+                nextTurn();
+            }, 300);
         }
         
         function playerCall() {
-            if (!gameState.player.isActive || gameState.player.folded) return;
+            if (!game.player.isActive) return;
             
-            const callAmount = gameState.currentBet - gameState.player.bet;
-            if (callAmount <= 0) {
+            const amount = game.currentBet - game.player.bet;
+            if (amount <= 0) {
                 playerCheck();
                 return;
             }
             
-            if (callAmount > gameState.player.balance) {
-                addLog("Недостаточно средств!");
+            if (amount > game.player.balance) {
+                addLog('💸 Недостаточно средств!');
                 return;
             }
             
-            makeBet(gameState.player, callAmount);
-            addLog(`Вы делаете колл (${callAmount})`);
-            endPlayerTurn();
+            placeBet(game.player, amount);
+            addLog(`💰 Вы делаете колл (${amount})`);
+            elements.checkCallBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                elements.checkCallBtn.style.transform = '';
+                nextTurn();
+            }, 300);
         }
         
         function playerRaise() {
-            if (!gameState.player.isActive || gameState.player.folded) return;
+            if (!game.player.isActive) return;
             
-            const raiseAmount = parseInt(betSlider.value);
-            const totalBet = gameState.player.bet + raiseAmount;
+            const amount = parseInt(elements.betSlider.value);
+            const total = game.player.bet + amount;
             
-            if (totalBet <= gameState.currentBet) {
-                addLog("Слишком маленькая ставка!");
+            if (total <= game.currentBet) {
+                addLog('📉 Ставка слишком мала!');
                 return;
             }
             
-            if (raiseAmount > gameState.player.balance) {
-                addLog("Недостаточно средств!");
+            if (amount > game.player.balance) {
+                addLog('💸 Недостаточно средств!');
                 return;
             }
             
-            makeBet(gameState.player, raiseAmount);
-            addLog(`Вы повышаете на ${raiseAmount}`);
-            gameState.currentBet = totalBet;
-            endPlayerTurn();
+            placeBet(game.player, amount);
+            game.currentBet = total;
+            addLog(`🚀 Вы повышаете ставку на ${amount}`);
+            elements.raiseBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                elements.raiseBtn.style.transform = '';
+                nextTurn();
+            }, 300);
         }
         
         function playerFold() {
-            if (!gameState.player.isActive || gameState.player.folded) return;
+            if (!game.player.isActive) return;
             
-            gameState.player.folded = true;
-            addLog("Вы сбрасываете карты");
-            endGame();
+            game.player.folded = true;
+            addLog('❌ Вы сбрасываете карты');
+            elements.foldBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                elements.foldBtn.style.transform = '';
+                endRound();
+            }, 300);
         }
         
-        // Завершение хода игрока
-        function endPlayerTurn() {
-            gameState.player.isActive = false;
-            playerArea.classList.remove('active');
+        // Ход бота с анимацией
+        function botTurn() {
+            if (!game.bot.isActive) return;
             
-            if (checkForRoundEnd()) return;
-            
-            gameState.bot.isActive = true;
-            botArea.classList.add('active');
-            setTimeout(botAction, 1000);
-        }
-        
-        // Действие бота
-        function botAction() {
-            if (!gameState.bot.isActive || gameState.bot.folded) return;
-            
-            const handStrength = evaluateHandStrength();
-            const callAmount = gameState.currentBet - gameState.bot.bet;
-            const willBluff = Math.random() < gameState.bot.bluffChance;
-            
-            let action;
-            
-            if (callAmount === 0) {
-                if (handStrength > 0.6 || willBluff) {
-                    const raiseAmount = Math.min(gameState.currentBet * 2, gameState.bot.balance);
-                    action = { type: 'raise', amount: raiseAmount };
+            // Анимация размышления
+            elements.botElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                elements.botElement.style.transform = '';
+                
+                const handStrength = evaluateHand(game.bot.hand, game.communityCards);
+                const callAmount = game.currentBet - game.bot.bet;
+                const willBluff = Math.random() < game.bot.bluff;
+                
+                let action;
+                
+                if (callAmount === 0) {
+                    if (handStrength > 0.6 || willBluff) {
+                        const raise = Math.min(game.currentBet * 2, game.bot.balance);
+                        action = { type: 'raise', amount: raise };
+                    } else {
+                        action = { type: 'check' };
+                    }
                 } else {
-                    action = { type: 'check' };
+                    if (handStrength > 0.7 || (willBluff && handStrength > 0.3)) {
+                        const raise = Math.min(callAmount * 2, game.bot.balance);
+                        action = { type: 'raise', amount: raise };
+                    } else if (handStrength > 0.3 || callAmount < game.bot.balance * 0.2) {
+                        action = { type: 'call' };
+                    } else {
+                        action = { type: 'fold' };
+                    }
                 }
-            } else {
-                if (handStrength > 0.7 || (willBluff && handStrength > 0.3)) {
-                    const raiseAmount = Math.min(callAmount * 2, gameState.bot.balance);
-                    action = { type: 'raise', amount: raiseAmount };
-                } else if (handStrength > 0.3 || callAmount < gameState.bot.balance * 0.2) {
-                    action = { type: 'call' };
-                } else {
-                    action = { type: 'fold' };
+                
+                // Анимация действия
+                switch (action.type) {
+                    case 'check':
+                        addLog('🤖 Дилер проверяет');
+                        break;
+                    case 'call':
+                        placeBet(game.bot, callAmount);
+                        addLog(`🤖 Дилер делает колл (${callAmount})`);
+                        break;
+                    case 'raise':
+                        placeBet(game.bot, action.amount);
+                        game.currentBet = game.bot.bet;
+                        addLog(`🤖 Дилер повышает на ${action.amount}`);
+                        break;
+                    case 'fold':
+                        game.bot.folded = true;
+                        addLog('🤖 Дилер сбрасывает карты');
+                        endRound();
+                        return;
                 }
-            }
-            
-            switch (action.type) {
-                case 'check':
-                    addLog("Бот проверяет");
-                    break;
-                case 'call':
-                    makeBet(gameState.bot, callAmount);
-                    addLog(`Бот делает колл (${callAmount})`);
-                    break;
-                case 'raise':
-                    makeBet(gameState.bot, action.amount);
-                    gameState.currentBet = gameState.bot.bet;
-                    addLog(`Бот повышает на ${action.amount}`);
-                    break;
-                case 'fold':
-                    gameState.bot.folded = true;
-                    addLog("Бот сбрасывает карты");
-                    endGame();
-                    return;
-            }
-            
-            gameState.bot.isActive = false;
-            botArea.classList.remove('active');
-            
-            if (checkForRoundEnd()) return;
-            
-            gameState.player.isActive = true;
-            playerArea.classList.add('active');
-            updateUI();
+                
+                game.bot.isActive = false;
+                elements.botElement.classList.remove('active');
+                
+                if (checkRoundEnd()) return;
+                
+                game.player.isActive = true;
+                elements.playerElement.classList.add('active');
+                setStatus('🎯 ВАШ ХОД!');
+                updateUI();
+                
+            }, 1000);
         }
         
-        // Проверка окончания раунда
-        function checkForRoundEnd() {
-            if (gameState.player.folded || gameState.bot.folded) {
-                endGame();
+        // Следующий ход
+        function nextTurn() {
+            game.player.isActive = false;
+            elements.playerElement.classList.remove('active');
+            
+            if (checkRoundEnd()) return;
+            
+            game.bot.isActive = true;
+            elements.botElement.classList.add('active');
+            setStatus('🤖 Ход дилера...');
+            
+            setTimeout(botTurn, 1000);
+        }
+        
+        // Проверка конца раунда
+        function checkRoundEnd() {
+            if (game.player.folded || game.bot.folded) {
+                endRound();
                 return true;
             }
             
-            if (gameState.player.bet === gameState.bot.bet && gameState.player.bet >= gameState.currentBet) {
-                advanceStage();
+            if (game.player.bet === game.bot.bet && game.player.bet >= game.currentBet) {
+                nextStage();
                 return true;
             }
             
             return false;
         }
         
-        // Следующая стадия
-        function advanceStage() {
-            switch (gameState.stage) {
+        // Следующая стадия с анимацией
+        function nextStage() {
+            switch (game.stage) {
                 case 'preflop':
-                    gameState.stage = 'flop';
-                    dealCommunityCards(3);
-                    addLog("Флоп: 3 общие карты");
+                    game.stage = 'flop';
+                    addCommunityCards(3);
+                    setStatus('🃏 ФЛОП: 3 карты на столе');
+                    addLog('✨ Открыт флоп');
                     break;
                 case 'flop':
-                    gameState.stage = 'turn';
-                    dealCommunityCards(1);
-                    addLog("Терн: 4-я карта");
+                    game.stage = 'turn';
+                    addCommunityCards(1);
+                    setStatus('🎴 ТЕРН: 4-я карта');
+                    addLog('🌟 Открыт терн');
                     break;
                 case 'turn':
-                    gameState.stage = 'river';
-                    dealCommunityCards(1);
-                    addLog("Ривер: 5-я карта");
+                    game.stage = 'river';
+                    addCommunityCards(1);
+                    setStatus('🌊 РИВЕР: 5-я карта');
+                    addLog('💫 Открыт ривер');
                     break;
                 case 'river':
-                    gameState.stage = 'showdown';
-                    endGame();
+                    game.stage = 'showdown';
+                    endRound();
                     return;
             }
             
-            gameState.player.bet = 0;
-            gameState.bot.bet = 0;
-            gameState.currentBet = 0;
+            game.player.bet = 0;
+            game.bot.bet = 0;
+            game.currentBet = 0;
             
-            if (gameState.dealer === 'bot') {
-                gameState.player.isActive = true;
-                playerArea.classList.add('active');
+            // Анимация смены стадии
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 300);
+            });
+            
+            if (game.dealer === 'bot') {
+                game.player.isActive = true;
+                elements.playerElement.classList.add('active');
+                setStatus('🎯 ВАШ ХОД!');
             } else {
-                gameState.bot.isActive = true;
-                botArea.classList.add('active');
-                setTimeout(botAction, 1000);
+                game.bot.isActive = true;
+                elements.botElement.classList.add('active');
+                setStatus('🤖 Ход дилера...');
+                setTimeout(botTurn, 1500);
             }
             
             updateUI();
         }
         
-        // Выдача общих карт
-        function dealCommunityCards(count) {
-            for (let i = 0; i < count; i++) {
-                if (gameState.deck.length > 0) {
-                    gameState.communityCards.push(gameState.deck.pop());
+        // Добавление общих карт с анимацией
+        function addCommunityCards(count) {
+            setTimeout(() => {
+                for (let i = 0; i < count; i++) {
+                    if (game.deck.length > 0) {
+                        game.communityCards.push(game.deck.pop());
+                    }
+                }
+                renderCardsWithAnimation();
+                updateCombinations();
+                
+                // Подсветка комбинаций
+                highlightComboCards(game.player.hand, game.communityCards);
+            }, 500);
+        }
+        
+        // Обновление комбинаций с анимацией
+        function updateCombinations() {
+            if (game.communityCards.length > 0) {
+                const playerScore = evaluateHand(game.player.hand, game.communityCards);
+                const combinationName = getCombinationName(playerScore);
+                elements.playerCombination.textContent = `🎯 ВАША КОМБИНАЦИЯ: ${combinationName}`;
+                
+                // Анимация для сильных комбинаций
+                if (playerScore >= 5) {
+                    elements.playerCombination.classList.add('highlight');
+                    setTimeout(() => {
+                        elements.playerCombination.classList.remove('highlight');
+                    }, 3000);
                 }
             }
-            renderCards();
         }
         
-        // Окончание игры
-        function endGame() {
-            gameState.gameActive = false;
-            gameState.player.isActive = false;
-            gameState.bot.isActive = false;
-            playerArea.classList.remove('active');
-            botArea.classList.remove('active');
+        // Окончание раунда с эпичной анимацией
+        function endRound() {
+            game.gameActive = false;
+            game.player.isActive = false;
+            game.bot.isActive = false;
+            elements.playerElement.classList.remove('active');
+            elements.botElement.classList.remove('active');
             
-            // Определение победителя
-            let winner = determineWinner();
-            
-            // Выплата банка
-            if (winner === 'player') {
-                gameState.player.balance += gameState.pot;
-                addLog(`🎉 Вы выиграли ${gameState.pot} монет!`);
-                playerArea.classList.add('winner');
+            // Переворачиваем карты бота
+            setTimeout(() => {
+                showBotCards();
                 
-                // Анимация выигрыша
-                playerArea.classList.add('pulse');
-                setTimeout(() => playerArea.classList.remove('pulse'), 1000);
-            } else if (winner === 'bot') {
-                gameState.bot.balance += gameState.pot;
-                addLog(`🤖 Бот выиграл ${gameState.pot} монет`);
-                botArea.classList.add('winner');
-            } else if (winner === 'split') {
-                const halfPot = Math.floor(gameState.pot / 2);
-                gameState.player.balance += halfPot;
-                gameState.bot.balance += halfPot;
-                addLog(`🤝 Ничья! Банк разделен`);
-            }
-            
-            // Показ карт бота
-            showBotCards();
-            
-            // Обновление UI
-            updateUI();
-            
-            // Включение кнопки следующего раунда
-            nextRoundBtn.disabled = false;
-            
-            // Смена дилера
-            gameState.dealer = gameState.dealer === 'bot' ? 'player' : 'bot';
-            
-            addLog("Раунд завершен");
+                const winner = determineWinner();
+                
+                if (winner === 'player') {
+                    game.player.balance += game.pot;
+                    addLog(`🎉 ВЫ ВЫИГРАЛИ ${game.pot} МОНЕТ!`);
+                    elements.playerElement.classList.add('winner');
+                    createConfetti();
+                    highlightWinner('player');
+                    setStatus('🏆 ПОБЕДА!');
+                } else if (winner === 'bot') {
+                    game.bot.balance += game.pot;
+                    addLog(`🤖 Дилер выиграл ${game.pot} монет`);
+                    elements.botElement.classList.add('winner');
+                    highlightWinner('bot');
+                    setStatus('😔 Поражение...');
+                } else {
+                    const half = Math.floor(game.pot / 2);
+                    game.player.balance += half;
+                    game.bot.balance += half;
+                    addLog(`🤝 Ничья! Банк разделён`);
+                    highlightWinner('both');
+                    setStatus('🤝 НИЧЬЯ!');
+                }
+                
+                game.dealer = game.dealer === 'bot' ? 'player' : 'bot';
+                game.round++;
+                
+                updateUI();
+                resetControls();
+                
+                setTimeout(() => {
+                    setStatus('🔄 Раунд завершён');
+                    addLog('🎮 Нажмите "НАЧАТЬ ИГРУ" для нового раунда');
+                }, 2000);
+                
+            }, 1000);
         }
         
-        // Определение победителя (упрощенная версия)
+        // Подсветка победителя
+        function highlightWinner(who) {
+            if (who === 'player' || who === 'both') {
+                elements.playerElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    elements.playerElement.style.transform = '';
+                }, 1000);
+            }
+            if (who === 'bot' || who === 'both') {
+                elements.botElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    elements.botElement.style.transform = '';
+                }, 1000);
+            }
+        }
+        
+        // Определение победителя
         function determineWinner() {
-            if (gameState.player.folded) return 'bot';
-            if (gameState.bot.folded) return 'player';
+            if (game.player.folded) return 'bot';
+            if (game.bot.folded) return 'player';
             
-            // Упрощенная оценка для мобильной версии
-            const playerScore = evaluateSimpleHand(gameState.player.hand, gameState.communityCards);
-            const botScore = evaluateSimpleHand(gameState.bot.hand, gameState.communityCards);
+            const playerScore = evaluateHand(game.player.hand, game.communityCards);
+            const botScore = evaluateHand(game.bot.hand, game.communityCards);
+            
+            const playerCombination = getCombinationName(playerScore);
+            const botCombination = getCombinationName(botScore);
+            
+            elements.playerCombination.textContent = `Вы: ${playerCombination}`;
+            elements.botCombination.textContent = `Дилер: ${botCombination}`;
             
             if (playerScore > botScore) return 'player';
             if (botScore > playerScore) return 'bot';
-            return 'split';
+            return 'draw';
         }
         
-        // Упрощенная оценка руки
-        function evaluateSimpleHand(playerHand, communityCards) {
-            const allCards = [...playerHand, ...communityCards];
-            
-            // Проверяем пары и тройки
+        // Оценка руки
+        function evaluateHand(hand, community) {
+            const allCards = [...hand, ...community];
             const values = {};
+            const suits = {};
+            
             allCards.forEach(card => {
                 values[card.value] = (values[card.value] || 0) + 1;
+                suits[card.suit] = (suits[card.suit] || 0) + 1;
             });
             
             let score = 0;
             let pairs = 0;
+            let three = false;
+            let four = false;
             
-            // Находим комбинации
-            for (const value in values) {
-                if (values[value] === 2) {
-                    pairs++;
-                    score += 2;
-                } else if (values[value] === 3) {
-                    score += 4;
-                } else if (values[value] === 4) {
-                    score += 8;
+            // Проверяем флэш
+            for (const suit in suits) {
+                if (suits[suit] >= 5) {
+                    score = Math.max(score, 6);
                 }
             }
             
-            if (pairs === 2) score += 1; // Две пары
-            if (pairs === 1 && score === 4) score += 2; // Фулл-хаус (упрощенно)
-            
-            // Добавляем вес по старшим картам
-            const sortedCards = allCards.sort((a, b) => b.numericValue - a.numericValue);
-            score += sortedCards[0].numericValue * 0.01;
-            
-            return score;
-        }
-        
-        // Оценка силы руки для бота (упрощенная)
-        function evaluateHandStrength() {
-            if (gameState.communityCards.length === 0) {
-                // Префлоп
-                const card1 = gameState.bot.hand[0];
-                const card2 = gameState.bot.hand[1];
-                
-                if (card1.value === card2.value) return 0.7; // Пара
-                if (card1.numericValue > 12 || card2.numericValue > 12) return 0.6; // Высокие карты
-                if (Math.abs(card1.numericValue - card2.numericValue) === 1) return 0.5; // Соседние
-                if (card1.suit === card2.suit) return 0.4; // Одна масть
-                return 0.3;
+            for (const value in values) {
+                if (values[value] === 2) {
+                    pairs++;
+                    score = Math.max(score, 2);
+                } else if (values[value] === 3) {
+                    three = true;
+                    score = Math.max(score, 4);
+                } else if (values[value] === 4) {
+                    four = true;
+                    score = 8;
+                }
             }
             
-            // С общими картами
-            const score = evaluateSimpleHand(gameState.bot.hand, gameState.communityCards);
-            return Math.min(score / 10, 0.9);
+            if (four) return 8;
+            if (three && pairs > 0) return 7;
+            if (score === 6) return 6;
+            if (pairs === 2) score = Math.max(score, 3);
+            
+            // Проверяем стрит
+            const sortedValues = allCards.map(c => c.numeric).sort((a, b) => a - b);
+            let straightCount = 1;
+            for (let i = 1; i < sortedValues.length; i++) {
+                if (sortedValues[i] === sortedValues[i-1] + 1) {
+                    straightCount++;
+                    if (straightCount >= 5) {
+                        score = Math.max(score, 5);
+                    }
+                } else if (sortedValues[i] !== sortedValues[i-1]) {
+                    straightCount = 1;
+                }
+            }
+            
+            return score + (Math.max(...sortedValues) * 0.001);
+        }
+        
+        // Название комбинации
+        function getCombinationName(score) {
+            const intScore = Math.floor(score);
+            if (intScore >= 8) return '🔥 КАРЕ';
+            if (intScore >= 7) return '💎 ФУЛЛ-ХАУС';
+            if (intScore >= 6) return '💧 ФЛЭШ';
+            if (intScore >= 5) return '📏 СТРИТ';
+            if (intScore >= 4) return '🎲 ТРОЙКА';
+            if (intScore >= 3) return '👥 ДВЕ ПАРЫ';
+            if (intScore >= 2) return '🤝 ПАРА';
+            return '👑 СТАРШАЯ КАРТА';
+        }
+        
+        // Включение управления
+        function enableControls() {
+            elements.checkCallBtn.disabled = false;
+            elements.raiseBtn.disabled = false;
+            elements.foldBtn.disabled = false;
+            
+            const maxBet = Math.min(game.player.balance, 500);
+            elements.betSlider.max = maxBet;
+            elements.betSlider.value = Math.min(50, maxBet);
+            elements.betAmount.textContent = elements.betSlider.value;
+        }
+        
+        // Сброс управления
+        function resetControls() {
+            setTimeout(() => {
+                elements.playBtn.disabled = false;
+                elements.playBtn.textContent = '🎮 НАЧАТЬ ИГРУ';
+                elements.checkCallBtn.disabled = true;
+                elements.raiseBtn.disabled = true;
+                elements.foldBtn.disabled = true;
+                
+                // Убираем победные эффекты
+                elements.playerElement.classList.remove('winner');
+                elements.botElement.classList.remove('winner');
+                elements.playerCombination.classList.remove('highlight');
+            }, 3000);
         }
         
         // Показ карт бота
         function showBotCards() {
-            botCardsEl.innerHTML = '';
-            gameState.bot.hand.forEach(card => {
-                const cardElement = createCardElement(card);
-                botCardsEl.appendChild(cardElement);
+            elements.botCards.innerHTML = '';
+            game.bot.hand.forEach(card => {
+                const cardElement = createCardElement(card, false);
+                elements.botCards.appendChild(cardElement);
             });
         }
         
-        // Создание элемента карты
+        // Создание карты
         function createCardElement(card, isBack = false) {
-            const cardElement = document.createElement('div');
+            const div = document.createElement('div');
             
             if (isBack) {
-                cardElement.className = 'card card-back';
-                cardElement.innerHTML = '🂠';
+                div.className = 'card card-back';
+                div.textContent = '🂠';
             } else {
-                cardElement.className = `card ${card.color}`;
-                cardElement.innerHTML = `
-                    <div class="card-top">${card.value}<br>${card.suit}</div>
-                    <div class="card-center">${card.suit}</div>
-                    <div class="card-bottom">${card.value}<br>${card.suit}</div>
+                div.className = `card ${card.color}`;
+                div.innerHTML = `
+                    <div class="card-value">${card.value}</div>
+                    <div class="card-suit">${card.suit}</div>
+                    <div class="card-value bottom">${card.value}</div>
                 `;
             }
             
-            return cardElement;
+            return div;
         }
         
-        // Отрисовка всех карт
-        function renderCards() {
-            // Карты игрока
-            playerCardsEl.innerHTML = '';
-            gameState.player.hand.forEach(card => {
-                const cardElement = createCardElement(card);
-                playerCardsEl.appendChild(cardElement);
-            });
+        // Обновление интерфейса
+        function updateUI() {
+            elements.playerBalance.textContent = game.player.balance;
+            elements.botBalance.textContent = game.bot.balance;
+            elements.pot.textContent = game.pot;
+            elements.potValue.textContent = game.pot;
+            elements.round.textContent = game.round;
+            elements.currentBet.textContent = game.currentBet;
             
-            // Карты бота
-            botCardsEl.innerHTML = '';
-            gameState.bot.hand.forEach(card => {
-                const isBack = gameState.gameActive;
-                const cardElement = createCardElement(card, isBack);
-                botCardsEl.appendChild(cardElement);
-            });
+            const callAmount = game.currentBet - game.player.bet;
+            if (callAmount > 0) {
+                elements.checkCallBtn.textContent = `✓ КОЛЛ (${callAmount})`;
+            } else {
+                elements.checkCallBtn.textContent = '✓ ПРОВЕРКА';
+            }
             
-            // Общие карты
-            communityCardsEl.innerHTML = '';
-            gameState.communityCards.forEach(card => {
-                const cardElement = createCardElement(card);
-                communityCardsEl.appendChild(cardElement);
-            });
+            const maxBet = Math.min(game.player.balance, 500);
+            elements.betSlider.max = maxBet;
+            
+            if (parseInt(elements.betSlider.value) > maxBet) {
+                elements.betSlider.value = maxBet;
+                elements.betAmount.textContent = maxBet;
+            }
+            
+            updateCombinations();
         }
         
-        // Сброс раунда
-        function resetRound() {
-            gameState.player.bet = 0;
-            gameState.bot.bet = 0;
-            gameState.pot = 0;
-            gameState.player.folded = false;
-            gameState.bot.folded = false;
-            gameState.player.isActive = false;
-            gameState.bot.isActive = false;
-            gameState.stage = 'preflop';
-            gameState.currentBet = 0;
-            
-            playerArea.classList.remove('winner', 'active');
-            botArea.classList.remove('winner', 'active');
-            
-            createDeck();
+        // Установка статуса
+        function setStatus(text) {
+            elements.gameStatus.textContent = text;
         }
         
-        // Включение действий игрока
-        function enablePlayerActions() {
-            checkBtn.disabled = false;
-            callBtn.disabled = false;
-            raiseBtn.disabled = false;
-            foldBtn.disabled = false;
-            
-            // Обновляем слайдер ставки
-            const maxBet = Math.min(gameState.player.balance, 500);
-            betSlider.max = maxBet;
-            betSlider.value = Math.min(50, maxBet);
-            betAmountEl.textContent = betSlider.value;
-        }
-        
-        // Отключение действий игрока
-        function disablePlayerActions() {
-            checkBtn.disabled = true;
-            callBtn.disabled = true;
-            raiseBtn.disabled = true;
-            foldBtn.disabled = true;
-        }
-        
-        // Добавление записи в лог
+        // Добавление в лог
         function addLog(message) {
-            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.textContent = `[${timestamp}] ${message}`;
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${time}] ${message}`;
             
-            gameLog.appendChild(logEntry);
+            elements.gameLog.appendChild(entry);
             
-            // Прокрутка к последнему сообщению
             setTimeout(() => {
-                gameLog.scrollTop = gameLog.scrollHeight;
+                elements.gameLog.scrollTop = elements.gameLog.scrollHeight;
             }, 100);
             
-            // Ограничиваем количество записей
-            if (gameLog.children.length > 20) {
-                gameLog.removeChild(gameLog.firstChild);
+            if (elements.gameLog.children.length > 20) {
+                elements.gameLog.removeChild(elements.gameLog.firstChild);
             }
         }
         
-        // Обновление UI
-        function updateUI() {
-            playerBalanceEl.textContent = gameState.player.balance;
-            botBalanceEl.textContent = gameState.bot.balance;
-            playerBetEl.textContent = gameState.player.bet;
-            botBetEl.textContent = gameState.bot.bet;
-            potEl.textContent = gameState.pot;
-            roundEl.textContent = gameState.round;
-            currentBetEl.textContent = gameState.currentBet;
-            
-            // Отображаем стадию игры
-            const stageNames = {
-                'preflop': 'Pre-flop',
-                'flop': 'Flop',
-                'turn': 'Turn',
-                'river': 'River',
-                'showdown': 'Showdown'
-            };
-            stageEl.textContent = stageNames[gameState.stage] || gameState.stage;
-            
-            // Обновляем статусы
-            playerStatusEl.textContent = gameState.player.isActive ? 'Ваш ход' : 
-                                       gameState.player.folded ? 'Сбросил карты' : 'Ожидание';
-            botStatusEl.textContent = gameState.bot.isActive ? 'Ходит...' : 
-                                     gameState.bot.folded ? 'Сбросил карты' : 'Ожидание';
-            
-            // Обновляем доступность кнопок
-            const canCheck = gameState.currentBet === 0 || gameState.player.bet === gameState.currentBet;
-            checkBtn.textContent = canCheck ? 'Проверка' : 'Пропуск';
-            
-            const callAmount = gameState.currentBet - gameState.player.bet;
-            callBtn.textContent = callAmount > 0 ? `Колл (${callAmount})` : 'Колл';
-            
-            // Обновляем слайдер ставки
-            const maxBet = Math.min(gameState.player.balance, 500);
-            betSlider.max = maxBet;
-            
-            // Если ставка больше максимума, уменьшаем ее
-            if (parseInt(betSlider.value) > maxBet) {
-                betSlider.value = maxBet;
-                betAmountEl.textContent = maxBet;
-            }
-            
-            // Если баланс игрока 0, блокируем начало игры
-            if (gameState.player.balance < gameState.smallBlind * 2) {
-                startBtn.disabled = true;
-                startBtn.textContent = 'Недостаточно средств';
-            }
-        }
-        
-        // Запуск игры при загрузке
-        document.addEventListener('DOMContentLoaded', init);
-        
-        // Предотвращаем масштабирование на двойной тап
-        let lastTap = 0;
-        document.addEventListener('touchend', function(event) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 500 && tapLength > 0) {
-                event.preventDefault();
-            }
-            lastTap = currentTime;
-        }, {passive: false});
-        
-        // Отключаем контекстное меню на долгий тап
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        }, false);
-        
-        // Предотвращаем скролл страницы при взаимодействии со слайдером
-        document.addEventListener('touchmove', function(e) {
-            if (e.target === betSlider) {
-                e.preventDefault();
-            }
-        }, {passive: false});
+        // Запуск игры
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
