@@ -3,1063 +3,1422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Poker</title>
+    <title>Квиз "Год единства народов России"</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a3c2b, #0f2b1e);
-            color: #fff;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            overflow-x: hidden;
             touch-action: manipulation;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
-        
-        /* Telegram стили */
-        .tg-header {
-            background: #3390ec;
-            color: white;
-            padding: 12px 16px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
-        
-        .game-container {
-            max-width: 100%;
+
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            overflow-x: hidden;
         }
-        
-        /* Компактные карты для Telegram */
-        .card {
-            width: 55px;
-            height: 75px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 6px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            color: var(--dark);
             position: relative;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
         }
-        
-        .card.red { color: #e53935; }
-        .card.black { color: #263238; }
-        
-        .card-value {
-            font-size: 0.9rem;
-            font-weight: bold;
-            line-height: 1;
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #e74c3c, #3498db, #27ae60, #f39c12);
         }
-        
-        .card-suit {
-            font-size: 1.4rem;
+
+        h1, h2, h3 {
             text-align: center;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary);
         }
-        
-        /* Компактные игроки */
-        .player {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .player.active {
-            border-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.1);
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .player-name {
-            font-weight: bold;
-            font-size: 1rem;
-        }
-        
-        .player-balance {
-            color: #FFD700;
-            font-weight: bold;
-        }
-        
-        .player-cards {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-        }
-        
-        /* Стол для Telegram */
-        .table {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
-            border-radius: 15px;
-            padding: 20px 15px;
-            text-align: center;
-            margin: 10px 0;
-            border: 4px solid #8B4513;
-        }
-        
-        .pot {
-            font-size: 1.4rem;
-            color: #FFD700;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
-        /* Кнопки для Telegram */
-        .tg-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+
+        h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            background: linear-gradient(90deg, #e74c3c, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             margin-top: 10px;
+            line-height: 1.2;
         }
-        
-        .tg-button {
-            padding: 14px 10px;
+
+        .subtitle {
+            text-align: center;
+            color: var(--secondary);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 25px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            background: white;
+            min-height: 60px;
+            font-size: 18px;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .rules-list {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .rules-list ul {
+            list-style: none;
+        }
+
+        .rules-list li {
+            margin-bottom: 18px;
+            padding-left: 10px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .rules-list i {
+            color: var(--accent);
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 22px 20px;
+            background: linear-gradient(90deg, var(--secondary), #c0392b);
+            color: white;
             border: none;
             border-radius: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 1.2rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .btn:hover, .btn:active {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(90deg, #c0392b, var(--secondary));
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, var(--accent), #2980b9);
+        }
+
+        .btn-secondary:hover, .btn-secondary:active {
+            background: linear-gradient(90deg, #2980b9, var(--accent));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #219653);
+        }
+
+        .btn-success:hover, .btn-success:active {
+            background: linear-gradient(90deg, #219653, var(--success));
+        }
+
+        .question-counter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid #e9ecef;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question {
+            font-size: clamp(1.2rem, 3vw, 1.3rem);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent);
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option {
+            padding: 25px 20px;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .option:hover, .option:active {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background-color: rgba(39, 174, 96, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--secondary);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .option-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 44px;
+            margin-right: 20px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .result-screen {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .result-score {
+            font-size: clamp(3rem, 10vw, 5rem);
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 30px 0;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .result-message {
+            font-size: clamp(1.3rem, 4vw, 1.5rem);
+            margin-bottom: 30px;
+            color: var(--primary);
+            line-height: 1.4;
+        }
+
+        .result-details {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .result-details h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--accent);
+        }
+
+        .result-details p {
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .flag-decoration {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
             gap: 8px;
         }
-        
-        .tg-button:active {
-            transform: scale(0.95);
+
+        .flag-color {
+            width: clamp(25px, 5vw, 30px);
+            height: clamp(50px, 10vw, 60px);
+            border-radius: 5px;
         }
-        
-        .tg-button-primary {
-            background: #3390ec;
+
+        .flag-color:nth-child(1) { background-color: #e74c3c; }
+        .flag-color:nth-child(2) { background-color: #3498db; }
+        .flag-color:nth-child(3) { background-color: #f1c40f; }
+        .flag-color:nth-child(4) { background-color: #27ae60; }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: clamp(2.5rem, 6vw, 3rem);
+            color: var(--secondary);
+        }
+
+        .player-name {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .confirmation-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .confirmation-content {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .confirmation-modal.active .confirmation-content {
+            transform: translateY(0);
+        }
+
+        .confirmation-content h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .confirmation-text {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .confirmation-buttons button {
+            flex: 1;
+            padding: 18px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .confirm-yes {
+            background: linear-gradient(90deg, var(--success), #219653);
             color: white;
-            grid-column: span 2;
         }
-        
-        .tg-button-success {
-            background: #4CAF50;
+
+        .confirm-no {
+            background: linear-gradient(90deg, #95a5a6, #7f8c8d);
             color: white;
         }
-        
-        .tg-button-warning {
-            background: #FF9800;
-            color: white;
-        }
-        
-        .tg-button-danger {
-            background: #F44336;
-            color: white;
-        }
-        
-        /* Мобильная адаптация */
-        @media (max-height: 600px) {
-            .card {
-                width: 48px;
-                height: 65px;
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
             }
             
-            .card-suit {
+            .player-name {
+                position: relative;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 20px;
+                display: inline-block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .question {
+                padding: 20px;
                 font-size: 1.2rem;
             }
             
-            .tg-button {
-                padding: 12px 8px;
-                font-size: 0.9rem;
+            .option {
+                padding: 22px 18px;
+            }
+            
+            .option-label {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 20px;
+                min-height: 65px;
+            }
+            
+            .confirmation-content {
+                padding: 25px;
+            }
+            
+            .confirmation-buttons {
+                flex-direction: column;
             }
         }
-        
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 18px;
+                border-radius: 16px;
+            }
+            
+            .question-counter {
+                padding: 15px;
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            
+            .timer {
+                font-size: 1.6rem;
+                justify-content: center;
+            }
+            
+            .option {
+                padding: 20px 15px;
+                min-height: 80px;
+            }
+            
+            .option-label {
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                margin-right: 15px;
+            }
         }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-out;
+
+        .pulse {
+            animation: pulse 1.5s infinite;
         }
-        
-        /* Скрытие карт бота */
-        .card-back {
-            background: linear-gradient(135deg, #1a237e, #283593);
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .timeout-message {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        .timeout-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .thank-you-message {
+            background-color: rgba(39, 174, 96, 0.1);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+
+        .share-section {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .share-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(90deg, #0088cc, #006699);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
+            padding: 18px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            margin-top: 15px;
+            min-height: 60px;
         }
-        
-        /* Статус бота */
-        .bot-status {
-            text-align: center;
-            color: #aaa;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            min-height: 20px;
-        }
-        
-        /* Индикатор комбинации игрока */
-        .player-combination {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 8px;
-            padding: 6px 10px;
-            text-align: center;
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: #FFD700;
-            min-height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .player-combination.highlight {
-            animation: glow 1s infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-            to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+
+        .telegram-btn:hover, .telegram-btn:active {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(90deg, #006699, #0088cc);
         }
     </style>
 </head>
 <body>
-    <div class="tg-header">♠️ Телеграм Покер ♥️</div>
-    
-    <div class="game-container">
-        <!-- Статистика -->
-        <div style="display: flex; justify-content: space-between; padding: 0 10px;">
-            <div>
-                <div style="font-size: 0.8rem; color: #aaa;">БАНК</div>
-                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD700;" id="pot">0</div>
-            </div>
-            <div>
-                <div style="font-size: 0.8rem; color: #aaa;">РАУНД</div>
-                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD700;" id="round">1</div>
-            </div>
+    <div class="container">
+        <div class="flag-decoration">
+            <div class="flag-color"></div>
+            <div class="flag-color"></div>
+            <div class="flag-color"></div>
+            <div class="flag-color"></div>
         </div>
         
-        <!-- Статус игры -->
-        <div style="background: rgba(51, 144, 236, 0.1); padding: 10px; border-radius: 10px; text-align: center; margin: 5px 10px; font-weight: bold; color: #3390ec;" id="game-status">
-            Нажмите "ИГРАТЬ"
-        </div>
-        
-        <!-- Бот (без комбинации) -->
-        <div class="player" id="bot-player">
-            <div class="player-header">
-                <div class="player-name">🤖 ДИЛЕР</div>
-                <div class="player-balance" id="bot-balance">1000</div>
-            </div>
-            <div class="player-cards" id="bot-cards"></div>
-            <!-- У бота нет показа комбинации -->
-            <div class="bot-status" id="bot-status">Карты скрыты</div>
-        </div>
-        
-        <!-- Стол -->
-        <div class="table">
-            <div class="pot">Банк: <span id="pot-value">0</span></div>
-            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;" id="community-cards"></div>
-        </div>
-        
-        <!-- Игрок (с комбинацией) -->
-        <div class="player" id="player-player">
-            <div class="player-header">
-                <div class="player-name">🎮 ВЫ</div>
-                <div class="player-balance" id="player-balance">1000</div>
-            </div>
-            <div class="player-cards" id="player-cards"></div>
-            <!-- Только у игрока показывается комбинация -->
-            <div class="player-combination" id="player-combination"></div>
-        </div>
-        
-        <!-- Управление -->
-        <div style="padding: 0 15px;">
-            <!-- Слайдер ставки -->
-            <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
-                <div style="text-align: center; margin-bottom: 10px;">СТАВКА: <span style="color: #FFD700; font-weight: bold;" id="bet-amount">50</span></div>
-                <input type="range" min="10" max="500" value="50" style="width: 100%; height: 30px;" id="bet-slider">
+        <div id="start-screen" class="screen active">
+            <div class="header">
+                <i class="fas fa-landmark logo"></i>
+                <div>
+                    <h1>Год единства народов России</h1>
+                    <div class="subtitle">Заочный институт против СТФ: битва умов</div>
+                </div>
             </div>
             
-            <!-- Кнопки действий -->
-            <div class="tg-buttons">
-                <button class="tg-button tg-button-primary" id="play-btn">🎮 НАЧАТЬ ИГРУ</button>
-                <button class="tg-button tg-button-success" id="check-call-btn" disabled>✓ ПРОВЕРКА</button>
-                <button class="tg-button tg-button-warning" id="raise-btn" disabled>↑ ПОДНЯТЬ</button>
-                <button class="tg-button tg-button-danger" id="fold-btn" disabled>✗ ФОЛД</button>
+            <div class="form-group">
+                <label for="player-name"><i class="fas fa-user"></i> Введите ваше имя:</label>
+                <input type="text" id="player-name" placeholder="Иван Иванов" maxlength="30">
             </div>
             
-            <!-- Лог игры -->
-            <div style="background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 12px; margin-top: 15px; max-height: 100px; overflow-y: auto; font-size: 0.8rem;">
-                <div id="game-log">
-                    <div style="padding: 5px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Добро пожаловать в покер!</div>
+            <button id="start-btn" class="btn pulse">
+                <i class="fas fa-play-circle"></i> Начать игру
+            </button>
+        </div>
+        
+        <div id="rules-screen" class="screen">
+            <h2><i class="fas fa-scroll"></i> Правила квиза</h2>
+            <div class="rules-list">
+                <ul>
+                    <li><i class="fas fa-clock"></i> На каждый вопрос даётся <strong>120 секунд</strong></li>
+                    <li><i class="fas fa-check-circle"></i> За верный ответ вы получаете <strong>1 балл</strong></li>
+                    <li><i class="fas fa-list-ol"></i> Всего в квизе <strong>30 сложных расчётных задач</strong> для студентов строительных специальностей</li>
+                    <li><i class="fas fa-brain"></i> Задачи связаны с тематикой <strong>единства народов России</strong></li>
+                    <li><i class="fas fa-mobile-alt"></i> Игра оптимизирована для мобильных устройств</li>
+                    <li><i class="fas fa-trophy"></i> Постарайтесь набрать как можно больше баллов!</li>
+                </ul>
+            </div>
+            
+            <button id="rules-back-btn" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            
+            <button id="start-game-btn" class="btn">
+                <i class="fas fa-play"></i> Начать квиз
+            </button>
+        </div>
+        
+        <div id="game-screen" class="screen">
+            <div class="player-name" id="current-player">Игрок: </div>
+            
+            <div class="question-counter">
+                <div class="current-question">Вопрос <span id="question-number">1</span> из 30</div>
+                <div class="timer">
+                    <i class="fas fa-clock"></i> <span id="timer">120</span> сек
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            
+            <div class="timeout-message" id="timeout-message">
+                <i class="fas fa-exclamation-triangle"></i> Время вышло! Ответ не засчитан.
+            </div>
+            
+            <div class="question" id="question-text">
+                В регионе проживают русские (56 %), татары (22 %) и ещё 3 народа с равной долей. Если общая численность — 2 млн человек, сколько представителей каждого из трёх малых народов?
+            </div>
+            
+            <div class="mobile-tap-hint">
+                <i class="fas fa-hand-point-up"></i> Нажмите на вариант ответа для выбора
+            </div>
+            
+            <div class="options" id="options-container">
+            </div>
+            
+            <button id="next-btn" class="btn" disabled>
+                <i class="fas fa-forward"></i> Следующий вопрос
+            </button>
+        </div>
+        
+        <div id="result-screen" class="screen">
+            <div class="result-screen">
+                <h2><i class="fas fa-trophy"></i> Результаты квиза</h2>
+                <div class="result-score" id="final-score">0</div>
+                <div class="result-message" id="result-message"></div>
+                
+                <div class="thank-you-message">
+                    <i class="fas fa-heart" style="color: #e74c3c; font-size: 2rem; margin-bottom: 15px;"></i>
+                    <h3>Благодарим за участие в квизе!</h3>
+                    <p>Вы проявили отличные знания в области математических расчетов и тематики единства народов России.</p>
+                    <p>Ваш результат — это доказательство ваших способностей!</p>
+                </div>
+                
+                <div class="result-details">
+                    <h3><i class="fas fa-chart-line"></i> Статистика</h3>
+                    <p><strong>Игрок:</strong> <span id="result-player"></span></p>
+                    <p><strong>Правильных ответов:</strong> <span id="correct-answers">0</span> из 30</p>
+                    <p><strong>Время прохождения:</strong> <span id="total-time">0</span> сек</p>
+                    <p><strong>Дата прохождения:</strong> <span id="completion-date"></span></p>
+                </div>
+                
+                <div class="share-section">
+                    <h3><i class="fas fa-share-alt"></i> Отправить результат</h3>
+                    <a href="https://t.me/seshhollowbones" class="telegram-btn" target="_blank">
+                        <i class="fab fa-telegram"></i> Отправить результаты в Telegram
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="confirmation-modal" id="confirmation-modal">
+        <div class="confirmation-content">
+            <h3><i class="fas fa-question-circle"></i> Подтверждение ответа</h3>
+            <div class="confirmation-text" id="confirmation-text">
+                Вы выбрали вариант ответа. Вы уверены, что хотите подтвердить этот выбор?
+            </div>
+            <div class="confirmation-buttons">
+                <button class="confirm-yes" id="confirm-yes">
+                    <i class="fas fa-check"></i> Да, подтверждаю
+                </button>
+                <button class="confirm-no" id="confirm-no">
+                    <i class="fas fa-times"></i> Нет, выбрать другой
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Telegram Web App API
-        let TelegramWebApp = {};
-        
-        // Проверяем, находимся ли мы в Telegram
-        function isTelegramWebApp() {
-            return window.Telegram && window.Telegram.WebApp;
-        }
-        
-        // Инициализация Telegram Web App
-        function initTelegramWebApp() {
-            if (isTelegramWebApp()) {
-                TelegramWebApp = window.Telegram.WebApp;
-                
-                // Расширяем приложение на весь экран
-                TelegramWebApp.expand();
-                
-                // Устанавливаем цвет фона
-                TelegramWebApp.setBackgroundColor('#0f2b1e');
-                
-                // Устанавливаем цвет кнопок
-                TelegramWebApp.setHeaderColor('#3390ec');
-                
-                addLog('Telegram Web App загружен');
+        const quizData = [
+            {
+                question: "В регионе проживают русские (56 %), татары (22 %) и ещё 3 народа с равной долей. Если общая численность — 2 млн человек, сколько представителей каждого из трёх малых народов?",
+                options: ["120 тыс.", "146 667", "160 тыс.", "180 тыс."],
+                correct: 1
+            },
+            {
+                question: "На фестивале народного творчества участвуют 4 коллектива: русские, башкиры, чуваши и мордва. Русские составляют 45 % участников, башкиры — ⅔ от числа русских, чуваши — на 20 человек меньше башкир. Если всего 300 человек, сколько мордвы?",
+                options: ["35", "40", "45", "50"],
+                correct: 0
+            },
+            {
+                question: "Площадь многонационального округа — 850 км². Леса занимают 36 %, пашни — 42 %. Остальная территория — поселения и дороги (в соотношении 3 : 1). Какова площадь дорог?",
+                options: ["42,5 км²", "66 км²", "51 км²", "68 км²"],
+                correct: 0
+            },
+            {
+                question: "В строительстве объекта работали 150 рабочих: русские, татары, удмурты. Русских на 30 больше, чем татар, а удмуртов — в 1,5 раза меньше, чем татар. Сколько удмуртов?",
+                options: ["20", "24", "30", "36"],
+                correct: 1
+            },
+            {
+                question: "Длина моста — 600 м. За первый месяц построили ⅜ длины, за второй — 40 % остатка, за третий — ½ нового остатка. Сколько метров осталось?",
+                options: ["135 м", "150 м", "165 м", "180 м"],
+                correct: 0
+            },
+            {
+                question: "Население города за 6 лет выросло на 22 %, достигнув 488 тыс. Какова была численность 6 лет назад?",
+                options: ["390 тыс.", "400 тыс.", "410 тыс.", "420 тыс."],
+                correct: 1
+            },
+            {
+                question: "Для укладки плитки закупили 3 000 штук. В первый день израсходовали 40 %, во второй — ⅗ остатка, в третий — 75 % нового остатка. Сколько плиток осталось?",
+                options: ["180", "216", "240", "270"],
+                correct: 0
+            },
+            {
+                question: "Высота башни — 144 м. На чертеже в масштабе 1 : 75 её высота 1,8 см. Соответствует ли чертёж масштабу?",
+                options: ["да, точно", "нет, занижена на 0,2 см", "нет, завышена на 0,3 см", "нет, занижена на 0,4 см"],
+                correct: 3
+            },
+            {
+                question: "В команде строителей 96 человек. Русские составляют ⁵⁄₁₂ команды, татары — ⅔ русских, остальные — представители других народов. Сколько «других»?",
+                options: ["16", "20", "24", "28"],
+                correct: 0
+            },
+            {
+                question: "Смета на строительство: материалы — 2,1 млн руб., работа — 1,35 млн руб. Накладные расходы — 22 % от суммы материалов и работы. Итоговая стоимость с НДС (20 %)?",
+                options: ["4 536 тыс. руб.", "4 622,4 тыс. руб.", "4 704 тыс. руб.", "4 800 тыс. руб."],
+                correct: 1
+            },
+            {
+                question: "В районе 300 сёл. Газифицировано 48 % из них. Из оставшихся ⅖ имеют доступ к газу через соседей. Сколько сёл полностью без газа?",
+                options: ["126", "132", "144", "156"],
+                correct: 1
+            },
+            {
+                question: "Длина дороги — 240 км. За первый месяц построили 35 %, за второй — на 30 % больше, чем за первый. Сколько км осталось?",
+                options: ["72 км", "84 км", "96 км", "108 км"],
+                correct: 0
+            },
+            {
+                question: "В школе 1 200 учеников. Дети мигрантов — 28 %. Из них ⅜ — из стран СНГ, остальные — из Средней Азии. Сколько учеников из Средней Азии?",
+                options: ["210", "252", "280", "336"],
+                correct: 0
+            },
+            {
+                question: "Плотность бетона — 2 400 кг/м³. Для фундамента нужно 7,2 м³ раствора. Масса с учётом 6 % потерь при заливке?",
+                options: ["17 280 кг", "18 316,8 кг", "19 008 кг", "19 440 кг"],
+                correct: 1
+            },
+            {
+                question: "В конкурсе участвовали 200 человек: русские, татары, башкиры, марийцы. Русские — 45 %, татары — на 25 человек меньше русских, башкиры — ½ татар. Сколько марийцев?",
+                options: ["10", "15", "20", "25"],
+                correct: 2
+            },
+            {
+                question: "Площадь участка — 2,5 га. Под застройку отведено 64 %. Из остатка 20 % займёт парковка, 30 % — сквер, остальное — дорожки. Какова площадь дорожек?",
+                options: ["0,36 га", "0,45 га", "0,50 га", "0,60 га"],
+                correct: 0
+            },
+            {
+                question: "Высота здания — 86,4 м. Первые 6 этажей — по 3,6 м, остальные — по 3,2 м. Сколько всего этажей?",
+                options: ["22", "23", "24", "25"],
+                correct: 2
+            },
+            {
+                question: "В регионе 500 тыс. жителей. За 7 лет 14 % переехали, но прибыло 10 % новых жителей. Какова численность сейчас?",
+                options: ["472 тыс.", "482 тыс.", "490 тыс.", "504 тыс."],
+                correct: 1
+            },
+            {
+                question: "Для фундамента нужно 12 м³ щебня. Грузовик везёт 2,4 м³ за рейс, но 8 % груза теряется при погрузке. Сколько рейсов потребуется?",
+                options: ["5", "6", "7", "8"],
+                correct: 1
+            },
+            {
+                question: "В селе 240 домов. Отремонтировано 70 %, но 25 % отремонтированных требуют доработки. Сколько домов полностью готовы?",
+                options: ["126", "140", "154", "168"],
+                correct: 0
+            },
+            {
+                question: "В многонациональном посёлке 450 жителей: русские, татары, башкиры и удмурты. Русские составляют 40 %, татары — ⅔ от числа русских, башкиры — на 15 человек меньше татар. Сколько удмуртов?",
+                options: ["45", "60", "75", "90"],
+                correct: 2
+            },
+            {
+                question: "На межрегиональной стройке работают 240 человек. Русские — 55 %, татары — ⅖ от числа русских, остальные — представители других народов. Сколько «других»?",
+                options: ["36", "48", "60", "72"],
+                correct: 3
+            },
+            {
+                question: "Площадь культурного комплекса — 1,8 га. Под здания отведено 55 %, под парки — ⅓ остатка. Остальная территория — пешеходные зоны. Какова их площадь?",
+                options: ["0,45 га", "0,54 га", "0,60 га", "0,72 га"],
+                correct: 1
+            },
+            {
+                question: "Высота минарета мечети — 54 м, колокольни храма — 48 м. На чертеже в масштабе 1 : 60 разница их высот составляет 1 см. Соответствует ли чертёж масштабу?",
+                options: ["да, точно", "нет, занижена на 0,1 см", "нет, завышена на 0,2 см", "нет, занижена на 0,3 см"],
+                correct: 3
+            },
+            {
+                question: "В регионе 420 сёл. Газифицировано 52 % из них. Из оставшихся ⅜ имеют доступ к газу через соседей. Сколько сёл полностью без газа?",
+                options: ["147", "168", "189", "210"],
+                correct: 0
+            },
+            {
+                question: "Длина автодороги — 360 км. За первый месяц построили 40 %, за второй — на 20 % больше, чем за первый. Сколько км осталось?",
+                options: ["72 км", "86,4 км", "96 км", "108 км"],
+                correct: 1
+            },
+            {
+                question: "В школе 1 500 учеников. Дети мигрантов — 24 %. Из них ⅝ — из стран СНГ, остальные — из Закавказья. Сколько учеников из Закавказья?",
+                options: ["180", "216", "240", "288"],
+                correct: 1
+            },
+            {
+                question: "Плотность кирпича — 1 800 кг/м³. Для кладки стены нужно 4,5 м³ материала. Масса с учётом 7 % потерь при укладке?",
+                options: ["7 560 кг", "8 127 кг", "8 460 кг", "8 820 кг"],
+                correct: 1
+            },
+            {
+                question: "В конкурсе участвовали 250 человек: русские, татары, чуваши, марийцы. Русские — 48 %, татары — на 30 человек меньше русских, чуваши — ½ татар. Сколько марийцев?",
+                options: ["10", "15", "20", "25"],
+                correct: 2
+            },
+            {
+                question: "Площадь участка — 3,2 га. Под застройку отведено 60 %. Из остатка 25 % займёт сквер, 40 % — спортивная зона, остальное — велодорожки. Какова площадь велодорожек?",
+                options: ["0,448 га", "0,560 га", "0,640 га", "0,768 га"],
+                correct: 0
             }
-        }
-        
-        // Инициализация игры
-        const game = {
-            player: { balance: 1000, bet: 0, hand: [], folded: false, isActive: false },
-            bot: { balance: 1000, bet: 0, hand: [], folded: false, isActive: false, bluff: 0.3 },
-            deck: [],
-            communityCards: [],
-            pot: 0,
-            round: 1,
-            stage: 'preflop',
-            currentBet: 10,
-            gameActive: false,
-            dealer: 'bot'
+        ];
+
+        const screens = {
+            start: document.getElementById('start-screen'),
+            rules: document.getElementById('rules-screen'),
+            game: document.getElementById('game-screen'),
+            result: document.getElementById('result-screen')
         };
         
-        // Элементы интерфейса
-        const elements = {
-            playerBalance: document.getElementById('player-balance'),
-            botBalance: document.getElementById('bot-balance'),
-            pot: document.getElementById('pot'),
-            potValue: document.getElementById('pot-value'),
-            round: document.getElementById('round'),
-            gameStatus: document.getElementById('game-status'),
-            playerCards: document.getElementById('player-cards'),
-            botCards: document.getElementById('bot-cards'),
-            communityCards: document.getElementById('community-cards'),
-            playerCombination: document.getElementById('player-combination'),
-            botStatus: document.getElementById('bot-status'),
-            betSlider: document.getElementById('bet-slider'),
-            betAmount: document.getElementById('bet-amount'),
-            playBtn: document.getElementById('play-btn'),
-            checkCallBtn: document.getElementById('check-call-btn'),
-            raiseBtn: document.getElementById('raise-btn'),
-            foldBtn: document.getElementById('fold-btn'),
-            gameLog: document.getElementById('game-log'),
-            playerElement: document.getElementById('player-player'),
-            botElement: document.getElementById('bot-player')
-        };
+        const playerNameInput = document.getElementById('player-name');
+        const currentPlayerElement = document.getElementById('current-player');
+        const resultPlayerElement = document.getElementById('result-player');
         
-        // Масти и карты
-        const suits = ['♠️', '♥️', '♦️', '♣️'];
-        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const questionNumberElement = document.getElementById('question-number');
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBarElement = document.getElementById('progress-bar');
+        const timeoutMessage = document.getElementById('timeout-message');
         
-        // Инициализация
-        function init() {
-            createDeck();
-            setupEventListeners();
-            updateUI();
-            addLog('Готов к игре!');
+        const timerElement = document.getElementById('timer');
+        const nextButton = document.getElementById('next-btn');
+        
+        const finalScoreElement = document.getElementById('final-score');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const totalTimeElement = document.getElementById('total-time');
+        const completionDateElement = document.getElementById('completion-date');
+        const resultMessageElement = document.getElementById('result-message');
+        
+        const startButton = document.getElementById('start-btn');
+        const rulesBackButton = document.getElementById('rules-back-btn');
+        const startGameButton = document.getElementById('start-game-btn');
+        
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmationText = document.getElementById('confirmation-text');
+        const confirmYesButton = document.getElementById('confirm-yes');
+        const confirmNoButton = document.getElementById('confirm-no');
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = '';
+        let timeLeft = 120;
+        let timerInterval = null;
+        let startTime = 0;
+        let selectedOption = null;
+        let answerSubmitted = false;
+        let totalGameTime = 0;
+        let questionStartTime = 0;
+        let pendingOptionElement = null;
+        let pendingOptionIndex = null;
+        
+        function initGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 120;
+            selectedOption = null;
+            answerSubmitted = false;
+            totalGameTime = 0;
+            pendingOptionElement = null;
+            pendingOptionIndex = null;
             
-            // Инициализируем Telegram Web App
-            initTelegramWebApp();
-        }
-        
-        // Создание колоды
-        function createDeck() {
-            game.deck = [];
-            for (let suit of suits) {
-                for (let value of values) {
-                    game.deck.push({
-                        suit,
-                        value,
-                        numeric: values.indexOf(value) + 2,
-                        color: suit === '♥️' || suit === '♦️' ? 'red' : 'black'
-                    });
-                }
+            if (timerInterval) {
+                clearInterval(timerInterval);
             }
+            
+            timeoutMessage.classList.remove('show');
+            
+            loadQuestion();
+            
+            currentPlayerElement.textContent = `Игрок: ${playerName}`;
         }
         
-        // Настройка событий
-        function setupEventListeners() {
-            // Кнопки
-            elements.playBtn.addEventListener('click', startGame);
-            elements.playBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                startGame();
-            });
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
             
-            elements.checkCallBtn.addEventListener('click', () => {
-                if (game.currentBet === 0 || game.player.bet === game.currentBet) {
-                    playerCheck();
-                } else {
-                    playerCall();
-                }
-            });
+            questionNumberElement.textContent = currentQuestionIndex + 1;
             
-            elements.raiseBtn.addEventListener('click', playerRaise);
-            elements.foldBtn.addEventListener('click', playerFold);
+            questionTextElement.textContent = question.question;
             
-            // Слайдер
-            elements.betSlider.addEventListener('input', () => {
-                elements.betAmount.textContent = elements.betSlider.value;
-            });
+            progressBarElement.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
             
-            // Эффект нажатия для всех кнопок
-            document.querySelectorAll('.tg-button').forEach(btn => {
-                btn.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.95)';
-                });
+            optionsContainer.innerHTML = '';
+            
+            const optionLabels = ['а', 'б', 'в', 'г'];
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.dataset.index = index;
                 
-                btn.addEventListener('touchend', function() {
-                    this.style.transform = '';
-                });
-            });
-        }
-        
-        // Начало игры
-        function startGame() {
-            if (game.gameActive) return;
-            
-            resetGame();
-            game.gameActive = true;
-            shuffleDeck();
-            dealCards();
-            setBlinds();
-            updateUI();
-            enableControls();
-            
-            if (game.dealer === 'bot') {
-                game.player.isActive = true;
-                elements.playerElement.classList.add('active');
-                setStatus('Ваш ход!');
-                addLog('Ваш ход. Что делаете?');
-            } else {
-                game.bot.isActive = true;
-                elements.botElement.classList.add('active');
-                setStatus('Ход дилера...');
-                setTimeout(botTurn, 1000);
-            }
-            
-            elements.playBtn.disabled = true;
-            elements.playBtn.textContent = 'ИГРА ИДЁТ';
-            addLog(`🎲 Раунд ${game.round} начался!`);
-        }
-        
-        // Сброс игры
-        function resetGame() {
-            game.player.bet = 0;
-            game.bot.bet = 0;
-            game.pot = 0;
-            game.player.folded = false;
-            game.bot.folded = false;
-            game.player.isActive = false;
-            game.bot.isActive = false;
-            game.stage = 'preflop';
-            game.currentBet = 10;
-            
-            elements.playerElement.classList.remove('active', 'winner');
-            elements.botElement.classList.remove('active', 'winner');
-            elements.playerCombination.textContent = '';
-            
-            createDeck();
-        }
-        
-        // Перемешивание
-        function shuffleDeck() {
-            for (let i = game.deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [game.deck[i], game.deck[j]] = [game.deck[j], game.deck[i]];
-            }
-        }
-        
-        // Раздача
-        function dealCards() {
-            game.player.hand = [];
-            game.bot.hand = [];
-            game.communityCards = [];
-            
-            for (let i = 0; i < 2; i++) {
-                game.player.hand.push(game.deck.pop());
-                game.bot.hand.push(game.deck.pop());
-            }
-            
-            renderCards();
-        }
-        
-        // Блайнды
-        function setBlinds() {
-            const small = 10;
-            const big = 20;
-            
-            if (game.dealer === 'bot') {
-                placeBet(game.player, big);
-                placeBet(game.bot, small);
-                addLog(`Вы: большой блайнд (${big})`);
-            } else {
-                placeBet(game.bot, big);
-                placeBet(game.player, small);
-                addLog(`Дилер: большой блайнд (${big})`);
-            }
-            
-            game.currentBet = big;
-        }
-        
-        // Ставка
-        function placeBet(player, amount) {
-            const bet = Math.min(amount, player.balance);
-            player.balance -= bet;
-            player.bet += bet;
-            game.pot += bet;
-            if (bet > game.currentBet) game.currentBet = bet;
-        }
-        
-        // Действия игрока
-        function playerCheck() {
-            if (!game.player.isActive) return;
-            
-            addLog('Вы проверяете');
-            nextTurn();
-        }
-        
-        function playerCall() {
-            if (!game.player.isActive) return;
-            
-            const amount = game.currentBet - game.player.bet;
-            if (amount <= 0) {
-                playerCheck();
-                return;
-            }
-            
-            if (amount > game.player.balance) {
-                addLog('Недостаточно средств!');
-                return;
-            }
-            
-            placeBet(game.player, amount);
-            addLog(`Вы делаете колл (${amount})`);
-            nextTurn();
-        }
-        
-        function playerRaise() {
-            if (!game.player.isActive) return;
-            
-            const amount = parseInt(elements.betSlider.value);
-            const total = game.player.bet + amount;
-            
-            if (total <= game.currentBet) {
-                addLog('Ставка слишком мала!');
-                return;
-            }
-            
-            if (amount > game.player.balance) {
-                addLog('Недостаточно средств!');
-                return;
-            }
-            
-            placeBet(game.player, amount);
-            game.currentBet = total;
-            addLog(`Вы повышаете ставку на ${amount}`);
-            nextTurn();
-        }
-        
-        function playerFold() {
-            if (!game.player.isActive) return;
-            
-            game.player.folded = true;
-            addLog('Вы сбрасываете карты');
-            endRound();
-        }
-        
-        // Ход бота
-        function botTurn() {
-            if (!game.bot.isActive) return;
-            
-            const handStrength = evaluateHand(game.bot.hand, game.communityCards);
-            const callAmount = game.currentBet - game.bot.bet;
-            const willBluff = Math.random() < game.bot.bluff;
-            
-            let action;
-            
-            if (callAmount === 0) {
-                if (handStrength > 0.6 || willBluff) {
-                    const raise = Math.min(game.currentBet * 2, game.bot.balance);
-                    action = { type: 'raise', amount: raise };
-                } else {
-                    action = { type: 'check' };
-                }
-            } else {
-                if (handStrength > 0.7 || (willBluff && handStrength > 0.3)) {
-                    const raise = Math.min(callAmount * 2, game.bot.balance);
-                    action = { type: 'raise', amount: raise };
-                } else if (handStrength > 0.3 || callAmount < game.bot.balance * 0.2) {
-                    action = { type: 'call' };
-                } else {
-                    action = { type: 'fold' };
-                }
-            }
-            
-            switch (action.type) {
-                case 'check':
-                    addLog('Дилер проверяет');
-                    break;
-                case 'call':
-                    placeBet(game.bot, callAmount);
-                    addLog(`Дилер делает колл (${callAmount})`);
-                    break;
-                case 'raise':
-                    placeBet(game.bot, action.amount);
-                    game.currentBet = game.bot.bet;
-                    addLog(`Дилер повышает на ${action.amount}`);
-                    break;
-                case 'fold':
-                    game.bot.folded = true;
-                    addLog('Дилер сбрасывает карты');
-                    endRound();
-                    return;
-            }
-            
-            game.bot.isActive = false;
-            elements.botElement.classList.remove('active');
-            
-            if (checkRoundEnd()) return;
-            
-            game.player.isActive = true;
-            elements.playerElement.classList.add('active');
-            setStatus('Ваш ход!');
-            updateUI();
-        }
-        
-        // Следующий ход
-        function nextTurn() {
-            game.player.isActive = false;
-            elements.playerElement.classList.remove('active');
-            
-            if (checkRoundEnd()) return;
-            
-            game.bot.isActive = true;
-            elements.botElement.classList.add('active');
-            setStatus('Ход дилера...');
-            
-            setTimeout(botTurn, 1500);
-        }
-        
-        // Проверка конца раунда
-        function checkRoundEnd() {
-            if (game.player.folded || game.bot.folded) {
-                endRound();
-                return true;
-            }
-            
-            if (game.player.bet === game.bot.bet && game.player.bet >= game.currentBet) {
-                nextStage();
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // Следующая стадия
-        function nextStage() {
-            switch (game.stage) {
-                case 'preflop':
-                    game.stage = 'flop';
-                    addCommunityCards(3);
-                    setStatus('Флоп: 3 карты на столе');
-                    addLog('Открыт флоп');
-                    break;
-                case 'flop':
-                    game.stage = 'turn';
-                    addCommunityCards(1);
-                    setStatus('Терн: 4-я карта');
-                    addLog('Открыт терн');
-                    break;
-                case 'turn':
-                    game.stage = 'river';
-                    addCommunityCards(1);
-                    setStatus('Ривер: 5-я карта');
-                    addLog('Открыт ривер');
-                    break;
-                case 'river':
-                    game.stage = 'showdown';
-                    endRound();
-                    return;
-            }
-            
-            game.player.bet = 0;
-            game.bot.bet = 0;
-            game.currentBet = 0;
-            
-            if (game.dealer === 'bot') {
-                game.player.isActive = true;
-                elements.playerElement.classList.add('active');
-                setStatus('Ваш ход!');
-            } else {
-                game.bot.isActive = true;
-                elements.botElement.classList.add('active');
-                setStatus('Ход дилера...');
-                setTimeout(botTurn, 1000);
-            }
-            
-            updateUI();
-        }
-        
-        // Добавление общих карт
-        function addCommunityCards(count) {
-            for (let i = 0; i < count; i++) {
-                if (game.deck.length > 0) {
-                    game.communityCards.push(game.deck.pop());
-                }
-            }
-            renderCards();
-            updatePlayerCombination();
-        }
-        
-        // Обновление комбинации игрока (только для игрока)
-        function updatePlayerCombination() {
-            if (game.communityCards.length > 0) {
-                const playerScore = evaluateHand(game.player.hand, game.communityCards);
-                const combinationName = getCombinationName(playerScore);
-                elements.playerCombination.textContent = `Ваша комбинация: ${combinationName}`;
-                
-                // Подсветка сильных комбинаций
-                if (playerScore >= 5) { // Флэш и выше
-                    elements.playerCombination.classList.add('highlight');
-                    setTimeout(() => {
-                        elements.playerCombination.classList.remove('highlight');
-                    }, 2000);
-                }
-            } else {
-                elements.playerCombination.textContent = '';
-            }
-        }
-        
-        // Окончание раунда
-        function endRound() {
-            game.gameActive = false;
-            game.player.isActive = false;
-            game.bot.isActive = false;
-            elements.playerElement.classList.remove('active');
-            elements.botElement.classList.remove('active');
-            
-            // Показываем карты бота только в конце
-            showBotCards();
-            
-            // Определяем победителя
-            const winner = determineWinner();
-            
-            if (winner === 'player') {
-                game.player.balance += game.pot;
-                addLog(`🎉 Вы выиграли ${game.pot} монет!`);
-                elements.playerElement.classList.add('winner');
-                highlightWinner('player');
-            } else if (winner === 'bot') {
-                game.bot.balance += game.pot;
-                addLog(`🤖 Дилер выиграл ${game.pot} монет`);
-                elements.botElement.classList.add('winner');
-                highlightWinner('bot');
-            } else {
-                const half = Math.floor(game.pot / 2);
-                game.player.balance += half;
-                game.bot.balance += half;
-                addLog(`🤝 Ничья! Банк разделён`);
-                highlightWinner('both');
-            }
-            
-            game.dealer = game.dealer === 'bot' ? 'player' : 'bot';
-            game.round++;
-            
-            updateUI();
-            resetControls();
-            
-            setStatus('Раунд завершён');
-            addLog('Нажмите "НАЧАТЬ ИГРУ" для нового раунда');
-        }
-        
-        // Подсветка победителя
-        function highlightWinner(who) {
-            if (who === 'player' || who === 'both') {
-                elements.playerElement.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-                setTimeout(() => {
-                    elements.playerElement.style.backgroundColor = '';
-                }, 3000);
-            }
-            if (who === 'bot' || who === 'both') {
-                elements.botElement.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-                setTimeout(() => {
-                    elements.botElement.style.backgroundColor = '';
-                }, 3000);
-            }
-        }
-        
-        // Определение победителя
-        function determineWinner() {
-            if (game.player.folded) return 'bot';
-            if (game.bot.folded) return 'player';
-            
-            const playerScore = evaluateHand(game.player.hand, game.communityCards);
-            const botScore = evaluateHand(game.bot.hand, game.communityCards);
-            
-            // Показываем финальные комбинации
-            const playerCombination = getCombinationName(playerScore);
-            const botCombination = getCombinationName(botScore);
-            
-            elements.playerCombination.textContent = `Вы: ${playerCombination}`;
-            elements.botStatus.textContent = `Дилер: ${botCombination}`;
-            
-            if (playerScore > botScore) return 'player';
-            if (botScore > playerScore) return 'bot';
-            return 'draw';
-        }
-        
-        // Оценка руки
-        function evaluateHand(hand, community) {
-            const allCards = [...hand, ...community];
-            const values = {};
-            const suits = {};
-            
-            allCards.forEach(card => {
-                values[card.value] = (values[card.value] || 0) + 1;
-                suits[card.suit] = (suits[card.suit] || 0) + 1;
-            });
-            
-            let score = 0;
-            let pairs = 0;
-            let three = false;
-            let four = false;
-            
-            // Проверяем флэш
-            for (const suit in suits) {
-                if (suits[suit] >= 5) {
-                    score = Math.max(score, 6); // Флэш
-                }
-            }
-            
-            for (const value in values) {
-                if (values[value] === 2) {
-                    pairs++;
-                    score = Math.max(score, 2); // Пара
-                } else if (values[value] === 3) {
-                    three = true;
-                    score = Math.max(score, 4); // Тройка
-                } else if (values[value] === 4) {
-                    four = true;
-                    score = 8; // Каре
-                }
-            }
-            
-            // Комбинированные комбинации
-            if (four) return 8; // Каре
-            if (three && pairs > 0) return 7; // Фулл-хаус
-            if (score === 6) return 6; // Флэш
-            if (pairs === 2) score = Math.max(score, 3); // Две пары
-            
-            // Проверяем стрит
-            const sortedValues = allCards.map(c => c.numeric).sort((a, b) => a - b);
-            let straightCount = 1;
-            for (let i = 1; i < sortedValues.length; i++) {
-                if (sortedValues[i] === sortedValues[i-1] + 1) {
-                    straightCount++;
-                    if (straightCount >= 5) {
-                        score = Math.max(score, 5); // Стрит
-                    }
-                } else if (sortedValues[i] !== sortedValues[i-1]) {
-                    straightCount = 1;
-                }
-            }
-            
-            // Добавляем вес по старшей карте
-            const sorted = allCards.sort((a, b) => b.numeric - a.numeric);
-            return score + (sorted[0].numeric * 0.001);
-        }
-        
-        // Название комбинации
-        function getCombinationName(score) {
-            const intScore = Math.floor(score);
-            if (intScore >= 8) return 'КАРЕ';
-            if (intScore >= 7) return 'ФУЛЛ-ХАУС';
-            if (intScore >= 6) return 'ФЛЭШ';
-            if (intScore >= 5) return 'СТРИТ';
-            if (intScore >= 4) return 'ТРОЙКА';
-            if (intScore >= 3) return 'ДВЕ ПАРЫ';
-            if (intScore >= 2) return 'ПАРА';
-            return 'СТАРШАЯ КАРТА';
-        }
-        
-        // Включение управления
-        function enableControls() {
-            elements.checkCallBtn.disabled = false;
-            elements.raiseBtn.disabled = false;
-            elements.foldBtn.disabled = false;
-            
-            const maxBet = Math.min(game.player.balance, 500);
-            elements.betSlider.max = maxBet;
-            elements.betSlider.value = Math.min(50, maxBet);
-            elements.betAmount.textContent = elements.betSlider.value;
-        }
-        
-        // Сброс управления
-        function resetControls() {
-            elements.playBtn.disabled = false;
-            elements.playBtn.textContent = '🎮 НАЧАТЬ ИГРУ';
-            elements.checkCallBtn.disabled = true;
-            elements.raiseBtn.disabled = true;
-            elements.foldBtn.disabled = true;
-            
-            // Скрываем комбинацию бота
-            elements.botStatus.textContent = 'Карты скрыты';
-        }
-        
-        // Показ карт бота
-        function showBotCards() {
-            elements.botCards.innerHTML = '';
-            game.bot.hand.forEach(card => {
-                elements.botCards.appendChild(createCardElement(card, false)); // Теперь показываем карты
-            });
-        }
-        
-        // Создание карты
-        function createCardElement(card, isBack = false) {
-            const div = document.createElement('div');
-            
-            if (isBack) {
-                div.className = 'card card-back';
-                div.textContent = '🂠';
-            } else {
-                div.className = `card ${card.color}`;
-                div.innerHTML = `
-                    <div class="card-value">${card.value}</div>
-                    <div class="card-suit">${card.suit}</div>
-                    <div class="card-value" style="transform: rotate(180deg);">${card.value}</div>
+                optionElement.innerHTML = `
+                    <span class="option-label">${optionLabels[index]}</span>
+                    <span class="option-text">${option}</span>
                 `;
-            }
-            
-            return div;
-        }
-        
-        // Отрисовка карт
-        function renderCards() {
-            // Карты игрока (всегда видны)
-            elements.playerCards.innerHTML = '';
-            game.player.hand.forEach(card => {
-                elements.playerCards.appendChild(createCardElement(card, false));
+                
+                optionElement.addEventListener('click', () => showConfirmation(optionElement, index));
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    showConfirmation(optionElement, index);
+                }, { passive: false });
+                
+                optionsContainer.appendChild(optionElement);
             });
             
-            // Карты бота (скрыты во время игры)
-            elements.botCards.innerHTML = '';
-            game.bot.hand.forEach(card => {
-                const isBack = game.gameActive && game.stage !== 'showdown';
-                elements.botCards.appendChild(createCardElement(card, isBack));
-            });
+            nextButton.disabled = true;
+            answerSubmitted = false;
+            selectedOption = null;
+            pendingOptionElement = null;
+            pendingOptionIndex = null;
             
-            // Общие карты
-            elements.communityCards.innerHTML = '';
-            game.communityCards.forEach(card => {
-                elements.communityCards.appendChild(createCardElement(card, false));
-            });
+            startTimerForQuestion();
         }
         
-        // Обновление интерфейса
-        function updateUI() {
-            elements.playerBalance.textContent = game.player.balance;
-            elements.botBalance.textContent = game.bot.balance;
-            elements.pot.textContent = game.pot;
-            elements.potValue.textContent = game.pot;
-            elements.round.textContent = game.round;
+        function showConfirmation(optionElement, optionIndex) {
+            if (answerSubmitted) return;
             
-            const callAmount = game.currentBet - game.player.bet;
-            if (callAmount > 0) {
-                elements.checkCallBtn.textContent = `✓ КОЛЛ (${callAmount})`;
-            } else {
-                elements.checkCallBtn.textContent = '✓ ПРОВЕРКА';
+            pendingOptionElement = optionElement;
+            pendingOptionIndex = optionIndex;
+            
+            const optionLabels = ['а', 'б', 'в', 'г'];
+            const optionText = optionElement.querySelector('.option-text').textContent;
+            
+            confirmationText.innerHTML = `Вы выбрали вариант <strong>${optionLabels[optionIndex]}) ${optionText}</strong>.<br>Вы уверены, что хотите подтвердить этот выбор?`;
+            
+            confirmationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideConfirmation() {
+            confirmationModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function confirmSelection() {
+            if (pendingOptionElement && pendingOptionIndex !== null) {
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                pendingOptionElement.classList.add('selected');
+                selectedOption = pendingOptionIndex;
+                
+                pendingOptionElement.classList.add('pulse');
+                setTimeout(() => {
+                    pendingOptionElement.classList.remove('pulse');
+                }, 300);
+                
+                nextButton.disabled = false;
+                
+                setTimeout(() => {
+                    if (!answerSubmitted && selectedOption !== null) {
+                        checkAnswer();
+                        nextButton.disabled = false;
+                    }
+                }, 1000);
             }
             
-            const maxBet = Math.min(game.player.balance, 500);
-            elements.betSlider.max = maxBet;
-            
-            if (parseInt(elements.betSlider.value) > maxBet) {
-                elements.betSlider.value = maxBet;
-                elements.betAmount.textContent = maxBet;
+            hideConfirmation();
+        }
+        
+        function cancelSelection() {
+            if (pendingOptionElement) {
+                pendingOptionElement.classList.remove('selected');
+            }
+            pendingOptionElement = null;
+            pendingOptionIndex = null;
+            selectedOption = null;
+            hideConfirmation();
+        }
+        
+        function startTimerForQuestion() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
             }
             
-            // Обновляем комбинацию игрока
-            updatePlayerCombination();
-        }
-        
-        // Установка статуса
-        function setStatus(text) {
-            elements.gameStatus.textContent = text;
-        }
-        
-        // Добавление в лог
-        function addLog(message) {
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const entry = document.createElement('div');
-            entry.className = 'fade-in';
-            entry.style.padding = '5px 0';
-            entry.style.borderBottom = '1px solid rgba(255, 255, 255, 0.1)';
-            entry.textContent = `[${time}] ${message}`;
+            timeLeft = 120;
+            timerElement.textContent = timeLeft;
+            timerElement.style.color = '#e74c3c';
+            timerElement.classList.remove('pulse');
             
-            elements.gameLog.appendChild(entry);
+            questionStartTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 30) {
+                    timerElement.style.color = '#e74c3c';
+                    
+                    if (timeLeft <= 10) {
+                        timerElement.classList.add('pulse');
+                    }
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+        
+        function checkAnswer() {
+            if (selectedOption === null) return;
+            
+            answerSubmitted = true;
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            const question = quizData[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.pointerEvents = 'none';
+            });
+            
+            options.forEach((opt, index) => {
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedOption && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                    opt.classList.add('shake');
+                }
+            });
+            
+            if (selectedOption === question.correct) {
+                score++;
+                
+                options[question.correct].classList.add('pulse');
+                
+                createConfetti();
+            }
+        }
+        
+        function handleTimeout() {
+            if (answerSubmitted) return;
+            
+            timeoutMessage.classList.add('show');
+            
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
             
             setTimeout(() => {
-                elements.gameLog.scrollTop = elements.gameLog.scrollHeight;
-            }, 100);
+                timeoutMessage.classList.remove('show');
+                nextQuestion();
+            }, 3000);
+        }
+        
+        function nextQuestion() {
+            if (!answerSubmitted && selectedOption === null) {
+            }
             
-            if (elements.gameLog.children.length > 20) {
-                elements.gameLog.removeChild(elements.gameLog.firstChild);
+            if (!answerSubmitted && selectedOption !== null) {
+                checkAnswer();
+                return;
+            }
+            
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                finishGame();
             }
         }
         
-        // Запуск игры
-        window.addEventListener('DOMContentLoaded', init);
-        
-        // Предотвращаем стандартные действия на мобильных
-        document.addEventListener('touchmove', (e) => {
-            if (e.target === elements.betSlider) {
-                e.preventDefault();
+        function finishGame() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
             }
+            
+            totalGameTime = Math.floor((Date.now() - startTime) / 1000);
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            
+            finalScoreElement.textContent = score;
+            correctAnswersElement.textContent = `${score} из ${quizData.length}`;
+            totalTimeElement.textContent = totalGameTime;
+            resultPlayerElement.textContent = playerName;
+            
+            const now = new Date();
+            completionDateElement.textContent = now.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let message = "";
+            if (percentage >= 90) {
+                message = "🏆 Отличный результат! Вы настоящий эксперт по теме единства народов России!";
+            } else if (percentage >= 70) {
+                message = "👍 Хороший результат! Вы хорошо разбираетесь в теме!";
+            } else if (percentage >= 50) {
+                message = "👌 Неплохой результат! Есть куда стремиться!";
+            } else {
+                message = "💪 Попробуйте ещё раз! Вы сможете лучше!";
+            }
+            
+            resultMessageElement.textContent = message;
+            
+            showScreen('result');
+        }
+        
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            screens[screenName].classList.add('active');
+            
+            if (screenName === 'game') {
+                startTime = Date.now();
+            }
+        }
+        
+        function createConfetti() {
+            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#27ae60', '#9b59b6'];
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 3 + 2;
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}%`;
+                confetti.style.opacity = '1';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                confetti.style.animation = `
+                    confettiFall ${animationDuration}s linear forwards,
+                    confettiRotate ${animationDuration/2}s linear infinite
+                `;
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.remove();
+                    }
+                }, animationDuration * 1000);
+            }
+        }
+        
+        startButton.addEventListener('click', () => {
+            playerName = playerNameInput.value.trim();
+            
+            if (!playerName) {
+                playerName = 'Игрок';
+                playerNameInput.value = playerName;
+            }
+            
+            showScreen('rules');
+        });
+        
+        startButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startButton.click();
         }, { passive: false });
+        
+        rulesBackButton.addEventListener('click', () => {
+            showScreen('start');
+        });
+        
+        rulesBackButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            rulesBackButton.click();
+        }, { passive: false });
+        
+        startGameButton.addEventListener('click', () => {
+            showScreen('game');
+            initGame();
+        });
+        
+        startGameButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startGameButton.click();
+        }, { passive: false });
+        
+        nextButton.addEventListener('click', () => {
+            nextQuestion();
+        });
+        
+        nextButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            nextButton.click();
+        }, { passive: false });
+        
+        confirmYesButton.addEventListener('click', () => {
+            confirmSelection();
+        });
+        
+        confirmNoButton.addEventListener('click', () => {
+            cancelSelection();
+        });
+        
+        confirmationModal.addEventListener('click', (e) => {
+            if (e.target === confirmationModal) {
+                cancelSelection();
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (confirmationModal.classList.contains('active')) {
+                if (e.key === 'Enter') {
+                    confirmSelection();
+                } else if (e.key === 'Escape') {
+                    cancelSelection();
+                }
+                return;
+            }
+            
+            if (!answerSubmitted && e.key >= '1' && e.key <= '4') {
+                const optionIndex = parseInt(e.key) - 1;
+                const optionElement = document.querySelectorAll('.option')[optionIndex];
+                
+                if (optionElement) {
+                    showConfirmation(optionElement, optionIndex);
+                }
+            }
+            
+            if (e.key === 'Enter' && selectedOption !== null && !answerSubmitted) {
+                checkAnswer();
+                nextButton.disabled = false;
+            }
+            
+            if (e.key === ' ' && answerSubmitted) {
+                nextQuestion();
+            }
+        });
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            playerNameInput.focus();
+            
+            playerNameInput.placeholder = "Введите ваше имя";
+            
+            setInterval(() => {
+                startButton.classList.toggle('pulse');
+            }, 2000);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes confettiFall {
+                    0% { top: -20px; transform: rotate(0deg); opacity: 1; }
+                    100% { top: 100%; transform: rotate(720deg); opacity: 0; }
+                }
+                
+                @keyframes confettiRotate {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.addEventListener('touchstart', function() {}, {passive: true});
+        });
     </script>
 </body>
 </html>
