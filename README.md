@@ -179,17 +179,6 @@
             color: white;
         }
         
-        /* Баннер для Telegram Web App */
-        .tg-webapp-banner {
-            background: linear-gradient(135deg, #3390ec, #1e88e5);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 10px 15px;
-            text-align: center;
-            display: none;
-        }
-        
         /* Мобильная адаптация */
         @media (max-height: 600px) {
             .card {
@@ -217,35 +206,53 @@
             animation: fadeIn 0.3s ease-out;
         }
         
-        /* Информация для Telegram */
-        .tg-info {
-            background: rgba(51, 144, 236, 0.1);
-            border: 1px solid #3390ec;
-            border-radius: 10px;
-            padding: 12px;
-            margin: 10px 15px;
+        /* Скрытие карт бота */
+        .card-back {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        /* Статус бота */
+        .bot-status {
+            text-align: center;
+            color: #aaa;
             font-size: 0.85rem;
-            color: #e0e0e0;
-            display: none;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        /* Индикатор комбинации игрока */
+        .player-combination {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 6px 10px;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #FFD700;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .player-combination.highlight {
+            animation: glow 1s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         }
     </style>
 </head>
 <body>
     <div class="tg-header">♠️ Телеграм Покер ♥️</div>
-    
-    <!-- Баннер для Telegram Web App -->
-    <div class="tg-webapp-banner" id="tg-banner">
-        <div style="font-weight: bold; margin-bottom: 5px;">🎮 Играйте в покер прямо в Telegram!</div>
-        <div style="font-size: 0.9rem;">Для лучшего опыта откройте в приложении Telegram</div>
-    </div>
-    
-    <!-- Информация о Telegram Web App -->
-    <div class="tg-info" id="tg-info">
-        <strong>Telegram Web App API доступен</strong>
-        <div style="margin-top: 5px; font-size: 0.8rem;">
-            Используйте Telegram-версию для лучшего опыта!
-        </div>
-    </div>
     
     <div class="game-container">
         <!-- Статистика -->
@@ -265,14 +272,15 @@
             Нажмите "ИГРАТЬ"
         </div>
         
-        <!-- Бот -->
+        <!-- Бот (без комбинации) -->
         <div class="player" id="bot-player">
             <div class="player-header">
                 <div class="player-name">🤖 ДИЛЕР</div>
                 <div class="player-balance" id="bot-balance">1000</div>
             </div>
             <div class="player-cards" id="bot-cards"></div>
-            <div style="text-align: center; color: #FFD700; font-size: 0.85rem; margin-top: 5px;" id="bot-combination"></div>
+            <!-- У бота нет показа комбинации -->
+            <div class="bot-status" id="bot-status">Карты скрыты</div>
         </div>
         
         <!-- Стол -->
@@ -281,14 +289,15 @@
             <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;" id="community-cards"></div>
         </div>
         
-        <!-- Игрок -->
+        <!-- Игрок (с комбинацией) -->
         <div class="player" id="player-player">
             <div class="player-header">
                 <div class="player-name">🎮 ВЫ</div>
                 <div class="player-balance" id="player-balance">1000</div>
             </div>
             <div class="player-cards" id="player-cards"></div>
-            <div style="text-align: center; color: #FFD700; font-size: 0.85rem; margin-top: 5px;" id="player-combination"></div>
+            <!-- Только у игрока показывается комбинация -->
+            <div class="player-combination" id="player-combination"></div>
         </div>
         
         <!-- Управление -->
@@ -330,9 +339,6 @@
             if (isTelegramWebApp()) {
                 TelegramWebApp = window.Telegram.WebApp;
                 
-                // Показываем информацию о Telegram Web App
-                document.getElementById('tg-info').style.display = 'block';
-                
                 // Расширяем приложение на весь экран
                 TelegramWebApp.expand();
                 
@@ -342,22 +348,7 @@
                 // Устанавливаем цвет кнопок
                 TelegramWebApp.setHeaderColor('#3390ec');
                 
-                // Показываем кнопку назад
-                TelegramWebApp.BackButton.show();
-                TelegramWebApp.BackButton.onClick(() => {
-                    TelegramWebApp.close();
-                });
-                
-                // Обработка закрытия
-                TelegramWebApp.onEvent('viewportChanged', (event) => {
-                    console.log('Viewport changed:', event);
-                });
-                
                 addLog('Telegram Web App загружен');
-            } else {
-                // Показываем баннер для браузера
-                document.getElementById('tg-banner').style.display = 'block';
-                addLog('Откройте в Telegram для лучшего опыта');
             }
         }
         
@@ -387,7 +378,7 @@
             botCards: document.getElementById('bot-cards'),
             communityCards: document.getElementById('community-cards'),
             playerCombination: document.getElementById('player-combination'),
-            botCombination: document.getElementById('bot-combination'),
+            botStatus: document.getElementById('bot-status'),
             betSlider: document.getElementById('bet-slider'),
             betAmount: document.getElementById('bet-amount'),
             playBtn: document.getElementById('play-btn'),
@@ -510,7 +501,6 @@
             elements.playerElement.classList.remove('active', 'winner');
             elements.botElement.classList.remove('active', 'winner');
             elements.playerCombination.textContent = '';
-            elements.botCombination.textContent = '';
             
             createDeck();
         }
@@ -762,7 +752,26 @@
                 }
             }
             renderCards();
-            evaluateAndShowCombinations();
+            updatePlayerCombination();
+        }
+        
+        // Обновление комбинации игрока (только для игрока)
+        function updatePlayerCombination() {
+            if (game.communityCards.length > 0) {
+                const playerScore = evaluateHand(game.player.hand, game.communityCards);
+                const combinationName = getCombinationName(playerScore);
+                elements.playerCombination.textContent = `Ваша комбинация: ${combinationName}`;
+                
+                // Подсветка сильных комбинаций
+                if (playerScore >= 5) { // Флэш и выше
+                    elements.playerCombination.classList.add('highlight');
+                    setTimeout(() => {
+                        elements.playerCombination.classList.remove('highlight');
+                    }, 2000);
+                }
+            } else {
+                elements.playerCombination.textContent = '';
+            }
         }
         
         // Окончание раунда
@@ -773,7 +782,10 @@
             elements.playerElement.classList.remove('active');
             elements.botElement.classList.remove('active');
             
+            // Показываем карты бота только в конце
             showBotCards();
+            
+            // Определяем победителя
             const winner = determineWinner();
             
             if (winner === 'player') {
@@ -828,8 +840,12 @@
             const playerScore = evaluateHand(game.player.hand, game.communityCards);
             const botScore = evaluateHand(game.bot.hand, game.communityCards);
             
-            elements.playerCombination.textContent = getCombinationName(playerScore);
-            elements.botCombination.textContent = getCombinationName(botScore);
+            // Показываем финальные комбинации
+            const playerCombination = getCombinationName(playerScore);
+            const botCombination = getCombinationName(botScore);
+            
+            elements.playerCombination.textContent = `Вы: ${playerCombination}`;
+            elements.botStatus.textContent = `Дилер: ${botCombination}`;
             
             if (playerScore > botScore) return 'player';
             if (botScore > playerScore) return 'bot';
@@ -852,50 +868,62 @@
             let three = false;
             let four = false;
             
-            for (const value in values) {
-                if (values[value] === 2) {
-                    pairs++;
-                    score += 2;
-                } else if (values[value] === 3) {
-                    three = true;
-                    score += 4;
-                } else if (values[value] === 4) {
-                    four = true;
-                    score += 8;
+            // Проверяем флэш
+            for (const suit in suits) {
+                if (suits[suit] >= 5) {
+                    score = Math.max(score, 6); // Флэш
                 }
             }
             
-            if (four) return 8;
-            if (three && pairs > 0) return 7;
-            if (Object.values(suits).some(count => count >= 5)) return 6;
-            if (pairs === 2) score += 1;
-            if (three) score += 2;
+            for (const value in values) {
+                if (values[value] === 2) {
+                    pairs++;
+                    score = Math.max(score, 2); // Пара
+                } else if (values[value] === 3) {
+                    three = true;
+                    score = Math.max(score, 4); // Тройка
+                } else if (values[value] === 4) {
+                    four = true;
+                    score = 8; // Каре
+                }
+            }
             
+            // Комбинированные комбинации
+            if (four) return 8; // Каре
+            if (three && pairs > 0) return 7; // Фулл-хаус
+            if (score === 6) return 6; // Флэш
+            if (pairs === 2) score = Math.max(score, 3); // Две пары
+            
+            // Проверяем стрит
+            const sortedValues = allCards.map(c => c.numeric).sort((a, b) => a - b);
+            let straightCount = 1;
+            for (let i = 1; i < sortedValues.length; i++) {
+                if (sortedValues[i] === sortedValues[i-1] + 1) {
+                    straightCount++;
+                    if (straightCount >= 5) {
+                        score = Math.max(score, 5); // Стрит
+                    }
+                } else if (sortedValues[i] !== sortedValues[i-1]) {
+                    straightCount = 1;
+                }
+            }
+            
+            // Добавляем вес по старшей карте
             const sorted = allCards.sort((a, b) => b.numeric - a.numeric);
-            score += sorted[0].numeric * 0.01;
-            
-            return Math.min(score, 10);
+            return score + (sorted[0].numeric * 0.001);
         }
         
         // Название комбинации
         function getCombinationName(score) {
-            if (score >= 8) return 'КАРЕ';
-            if (score >= 7) return 'ФУЛЛ-ХАУС';
-            if (score >= 6) return 'ФЛЭШ';
-            if (score >= 5) return 'СТРИТ';
-            if (score >= 4) return 'ТРОЙКА';
-            if (score >= 3) return 'ДВЕ ПАРЫ';
-            if (score >= 2) return 'ПАРА';
+            const intScore = Math.floor(score);
+            if (intScore >= 8) return 'КАРЕ';
+            if (intScore >= 7) return 'ФУЛЛ-ХАУС';
+            if (intScore >= 6) return 'ФЛЭШ';
+            if (intScore >= 5) return 'СТРИТ';
+            if (intScore >= 4) return 'ТРОЙКА';
+            if (intScore >= 3) return 'ДВЕ ПАРЫ';
+            if (intScore >= 2) return 'ПАРА';
             return 'СТАРШАЯ КАРТА';
-        }
-        
-        // Подсветка комбинации
-        function evaluateAndShowCombinations() {
-            const playerScore = evaluateHand(game.player.hand, game.communityCards);
-            const botScore = evaluateHand(game.bot.hand, game.communityCards);
-            
-            elements.playerCombination.textContent = getCombinationName(playerScore);
-            elements.botCombination.textContent = getCombinationName(botScore);
         }
         
         // Включение управления
@@ -917,13 +945,16 @@
             elements.checkCallBtn.disabled = true;
             elements.raiseBtn.disabled = true;
             elements.foldBtn.disabled = true;
+            
+            // Скрываем комбинацию бота
+            elements.botStatus.textContent = 'Карты скрыты';
         }
         
         // Показ карт бота
         function showBotCards() {
             elements.botCards.innerHTML = '';
             game.bot.hand.forEach(card => {
-                elements.botCards.appendChild(createCardElement(card));
+                elements.botCards.appendChild(createCardElement(card, false)); // Теперь показываем карты
             });
         }
         
@@ -932,11 +963,7 @@
             const div = document.createElement('div');
             
             if (isBack) {
-                div.className = 'card';
-                div.style.background = 'linear-gradient(135deg, #1a237e, #283593)';
-                div.style.color = 'white';
-                div.style.justifyContent = 'center';
-                div.style.alignItems = 'center';
+                div.className = 'card card-back';
                 div.textContent = '🂠';
             } else {
                 div.className = `card ${card.color}`;
@@ -952,20 +979,23 @@
         
         // Отрисовка карт
         function renderCards() {
+            // Карты игрока (всегда видны)
             elements.playerCards.innerHTML = '';
             game.player.hand.forEach(card => {
-                elements.playerCards.appendChild(createCardElement(card));
+                elements.playerCards.appendChild(createCardElement(card, false));
             });
             
+            // Карты бота (скрыты во время игры)
             elements.botCards.innerHTML = '';
             game.bot.hand.forEach(card => {
-                const isBack = game.gameActive;
+                const isBack = game.gameActive && game.stage !== 'showdown';
                 elements.botCards.appendChild(createCardElement(card, isBack));
             });
             
+            // Общие карты
             elements.communityCards.innerHTML = '';
             game.communityCards.forEach(card => {
-                elements.communityCards.appendChild(createCardElement(card));
+                elements.communityCards.appendChild(createCardElement(card, false));
             });
         }
         
@@ -991,6 +1021,9 @@
                 elements.betSlider.value = maxBet;
                 elements.betAmount.textContent = maxBet;
             }
+            
+            // Обновляем комбинацию игрока
+            updatePlayerCombination();
         }
         
         // Установка статуса
