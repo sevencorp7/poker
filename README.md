@@ -719,8 +719,8 @@
     <div style="max-width: 500px; margin: 0 auto; padding: 10px;">
         <!-- Шапка -->
         <div class="header">
-            <div class="title">🔥 ЭПИЧНЫЙ ПОКЕР</div>
-            <div class="subtitle">Невероятные анимации и эффекты!</div>
+            <div class="title"> ПОКЕР</div>
+            <div class="subtitle">Проиграть все деньги</div>
         </div>
         
         <!-- Статистика -->
