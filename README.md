@@ -754,7 +754,7 @@
         
         <!-- Стол -->
         <div class="table">
-            <div class="pot">Банк: <span id="pot-value">0</span> 🪙</div>
+            <div class="pot">Банк: <span id="pot-value">0</span> $</div>
             <div class="community-cards" id="community-cards"></div>
         </div>
         
