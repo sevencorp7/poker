@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Покер</title>
+    <title>🔥 Эпичный Покер</title>
     <style>
         * {
             box-sizing: border-box;
@@ -720,8 +720,8 @@
     <div style="max-width: 500px; margin: 0 auto; padding: 10px;">
         <!-- Шапка -->
         <div class="header">
-            <div class="title">ПОКЕР</div>
-            <div class="subtitle">Проиграть все деньги</div>
+            <div class="title">🔥 ЭПИЧНЫЙ ПОКЕР</div>
+            <div class="subtitle">Невероятные анимации и эффекты!</div>
         </div>
         
         <!-- Статистика -->
@@ -787,7 +787,7 @@
             </div>
             
             <div class="game-log" id="game-log">
-                <div class="log-entry">салам пополам</div>
+                <div class="log-entry">Добро пожаловать в эпичный покер! 💫</div>
             </div>
         </div>
     </div>
@@ -914,7 +914,7 @@
             setupEventListeners();
             updateUI();
             initParticles();
-            addLog('салам пополам!');
+            addLog('💫 Добро пожаловать в Эпичный Покер!');
         }
         
         // Создание колоды
