@@ -786,7 +786,7 @@
             </div>
             
             <div class="game-log" id="game-log">
-                <div class="log-entry">Добро пожаловать в эпичный покер! 💫</div>
+                <div class="log-entry">Добро пожаловать в покер! 💫</div>
             </div>
         </div>
     </div>
